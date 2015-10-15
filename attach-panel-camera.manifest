@@ -1,0 +1,15 @@
+<manifest>
+        <define>
+                <domain name="attach-panel-camera"/>
+		<provide>
+                        <label name="attach-panel-camera::data"/>
+		</provide>
+                <request>
+                        <smack request="aul::launch" type="x" />
+                        <smack request="attach-panel-camera::data" type="rw"/>
+                </request>
+        </define>
+        <request>
+                <domain name="_"/>
+        </request>
+</manifest>

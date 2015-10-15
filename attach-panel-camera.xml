@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://tizen.org/ns/packages" package="attach-panel-camera" version="0.1.0" install-location="internal-only">
+	<label>Camera-UG</label>
+	<author email="chitta.rs@samsung.com" href="www.samsung.com">CHITTA RANJAN</author>
+	<description>Camera-UG</description>
+
+	<ui-application appid="attach-panel-camera" exec="/usr/ug/bin/attach-panel-camera" ui-gadget="true" nodisplay="true" multiple="true" type="capp" taskmanage="false" process-pool="true">
+
+		<label>Camera-UG</label>
+		<label xml:lang="en-us">CameraUG</label>
+	</ui-application>
+
+    <privileges>
+        <privilege>http://developer.samsung.com/tizen/privilege/ui-gadget.admin</privilege>
+        <privilege>http://tizen.org/privilege/camera</privilege>
+	<privilege>http://tizen.org/privilege/recorder</privilege>
+	<privilege>http://tizen.org/privilege/mediastorage</privilege>
+	<privilege>http://tizen.org/privilege/content.read</privilege>
+	<privilege>http://tizen.org/privilege/content.write</privilege>
+    </privileges>
+</manifest>
