@@ -96,7 +96,7 @@ static Evas_Object *__attachPanelCamera_create_fullview(Evas_Object *parent, str
 	elm_win_indicator_mode_set(parent, ELM_WIN_INDICATOR_SHOW);
 	return base;
 }
-
+/*
 static Evas_Object *__attachPanelCamera_create_frameview(Evas_Object *parent, struct ug_data *ugd)
 {
 	Evas_Object *base;
@@ -111,7 +111,7 @@ static Evas_Object *__attachPanelCamera_create_frameview(Evas_Object *parent, st
 
 	return base;
 }
-
+*/
 static void *__attachPanelCamera_on_create(ui_gadget_h ug, enum ug_mode mode, app_control_h service,
 		       void *priv)
 {
@@ -304,7 +304,7 @@ static void __attachPanelCamera_on_event(ui_gadget_h ug, enum ug_event event, ap
 	}
 
 }
-
+/*
 static void __attachPanelCamera_on_key_event(ui_gadget_h ug, enum ug_key_event event,
 			 app_control_h service, void *priv)
 {
@@ -321,7 +321,7 @@ static void __attachPanelCamera_on_key_event(ui_gadget_h ug, enum ug_key_event e
 		break;
 	}
 }
-
+*/
 static void __attachPanelCamera_on_destroying(ui_gadget_h ug, app_control_h service, void *priv)
 {
 	LOGD("%s : called\n", __func__);
