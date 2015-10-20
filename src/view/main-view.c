@@ -96,11 +96,11 @@ static main_view *viewhandle = NULL;
 Evas_Object *_main_view_load_edj(Evas_Object *parent, const char *file, const char *group);
 static Eina_Bool _main_view_init_camera(main_view *view, int camera_type);
 static void _main_view_register_cbs(main_view *view);
-static void _main_view_back_cb(void *data, Evas_Object *obj, void *event_info);
+/*static void _main_view_back_cb(void *data, Evas_Object *obj, void *event_info);*/
 static void _main_view_pause_cb(void *data, Evas_Object *obj, void *event_info);
 static void _main_view_resume_cb(void *data, Evas_Object *obj, void *event_info);
 
-static size_t _main_view_get_last_file_path(char *file_path, size_t size);
+/*static size_t _main_view_get_last_file_path(char *file_path, size_t size);*/
 static size_t _main_view_get_file_path(char *file_path, size_t size, CamFileType fileType);
 
 static void _main_view_capture_cb(camera_image_data_s *image,
@@ -111,8 +111,8 @@ static Eina_Bool _main_view_stop_camera_preview (camera_h camera);
 
 static void _main_view_shutter_button_cb(void *data, Evas_Object *obj,
         const char *emission, const char *source);
-static void _main_view_video_button_cb(void *data, Evas_Object *obj,
-        const char *emission, const char *source);
+/*static void _main_view_video_button_cb(void *data, Evas_Object *obj,
+        const char *emission, const char *source);*/
 static void _main_view_switch_camera_button_cb(void *data, Evas_Object *obj,
         const char *emission, const char *source);
 static void _main_view_recorder_pause_button_cb(void *data, Evas_Object *obj,
@@ -266,7 +266,7 @@ static void _main_view_copy_exifdata_to_buffer(unsigned char* inData, unsigned i
 
 	if (head[0] == 0 || head[1] == 0 || headLen == 0) {
 		DBG("Set header failed");
-		return false;
+		return;
 	}
 
 	data = (unsigned char*)malloc(dataSize);
@@ -303,11 +303,11 @@ void _main_view_transform_completed(media_packet_h *dst, int error_code, void *u
 	RETM_IF(!view, "main_view is NULL");
 	int ret = 0;
 	void* src_ptr;
-	unsigned int size = 0;
+	uint64_t size = 0;
 	media_format_h dst_fmt;
 	media_format_mimetype_e dst_mimetype;
 	int dst_width, dst_height, dst_avg_bps, dst_max_bps;
-	char *output_fmt = NULL;
+	/*char *output_fmt = NULL;*/
 	if (media_packet_get_format(*dst, &dst_fmt) != MEDIA_PACKET_ERROR_NONE) {
 		DBG("media_packet_get_format failed");
 	}
@@ -331,7 +331,7 @@ void _main_view_transform_completed(media_packet_h *dst, int error_code, void *u
 		unsigned char *buffer = NULL ;
 		unsigned char *finalBuffer = NULL;
 		int bufferSize = 0 ;
-		int finalBufferSize = 0;
+		unsigned int finalBufferSize = 0;
 
 		ret = image_util_encode_jpeg_to_memory(src_ptr,  dst_width, dst_height, IMAGE_UTIL_COLORSPACE_RGB888, 100, &buffer, (unsigned int *)&bufferSize);
 		if (ret == IMAGE_UTIL_ERROR_NONE) {
@@ -439,14 +439,14 @@ void _main_view_media_create(char * filename, CamTransformType transformtype)
 	main_view *view = (main_view *)_main_view_get_data();
 	RETM_IF(!view, "main_view is NULL");
 	const image_util_colorspace_e colorspace = IMAGE_UTIL_COLORSPACE_RGB888;
-	unsigned char *img_rotate_target = NULL;
+	/*unsigned char *img_rotate_target = NULL;*/
 	unsigned char *img_source = NULL;
 	int ret = 0;
 	int width = 0, height = 0;
 	unsigned int size_decode = 0;
-	unsigned int size = 0;
+	uint64_t size = 0;
 	void* src_ptr;
-	int i = 0;
+	/*int i = 0;*/
 	DBG("file name is %s",filename);
 	if (pkt) {
 		DBG("Destroy the media packet");
@@ -504,7 +504,7 @@ void _main_view_media_create(char * filename, CamTransformType transformtype)
 		if (ret != MEDIA_PACKET_ERROR_NONE ) {
 			DBG("media_packet_get_buffer_data_ptr failed %d ", ret);
 		}
-		ret = memcpy(src_ptr, img_source, size);
+		memcpy(src_ptr, img_source, size);
 		DBG("Media packet creation success,image_util_transform_create start");
 
 		ret = image_util_transform_create(&handle);
@@ -754,7 +754,7 @@ static void _main_view_recorder_set_recording_size(main_view *view)
 	}
 	if (view->is_size_limit == TRUE) {
 		char str1[10] = "";
-		char str2[10] = "";
+		/*char str2[10] = "";*/
 		double pbar_position = 0.0;
 		double size_limit_in_mega = 0.0;
 
@@ -798,7 +798,7 @@ void _main_view_recorder_update_time(main_view *view)
 		DBG("recorder state = %d && file size = %lld", state, view->rec_filesize);
 	}
 }
-
+/*
 static void _main_view_recording_status_cb(unsigned long long elapsed_time, unsigned long long file_size, void *user_data)
 {
 	main_view *view = (main_view*)user_data;
@@ -813,7 +813,7 @@ static void _main_view_recording_status_cb(unsigned long long elapsed_time, unsi
 		view->rec_filesize = file_size;
 	}
 }
-
+*/
 static void _main_view_recorder_set_recording_time(main_view *view)
 {
 	RETM_IF(!view, "main_view is NULL");
@@ -946,7 +946,7 @@ void _main_view_recorder_view_add(main_view *view)
 	evas_object_show(view->layout);
 	endfunc
 }
-
+/*
 static Eina_Bool _main_view_create_recorder(camera_h camera)
 {
 	startfunc
@@ -961,7 +961,7 @@ static Eina_Bool _main_view_create_recorder(camera_h camera)
 	endfunc
 	return EINA_TRUE;
 }
-
+*/
 static Eina_Bool _main_view_start_camera_preview (camera_h camera)
 {
     startfunc
@@ -1082,7 +1082,7 @@ static Eina_Bool _main_view_init_camera(main_view *view, int camera_type)
 	endfunc
 	return !result;
 }
-
+/*
 static Eina_Bool _stop_cb(void *data)
 {
 	main_view *view = data;
@@ -1153,7 +1153,6 @@ static Eina_Bool _main_view_init_recorder(main_view *view)
 	int channel = 0;
 	int a_bitrate = 0;
 	int v_bitrate = 0;
-	/* resolution */
 	int res = 0;
 	size_t size = _main_view_get_file_path(view->filename, sizeof(view->filename), CAM_FILE_VIDEO);
 	RETVM_IF(0 == size, EINA_FALSE, "failed to get file path")
@@ -1169,7 +1168,7 @@ static Eina_Bool _main_view_init_recorder(main_view *view)
 		v_bitrate = 96100;
 		res = CAM_RESOLUTION_QCIF;
 	} else {
-		video_codec = RECORDER_VIDEO_CODEC_MPEG4 ; /* RECORDER_VIDEO_CODEC_H264;*/
+		video_codec = RECORDER_VIDEO_CODEC_MPEG4 ;
 		audio_codec = RECORDER_AUDIO_CODEC_AAC;
 		sample_rate = 48000;
 		file_format = RECORDER_FILE_FORMAT_MP4;
@@ -1300,7 +1299,7 @@ static Eina_Bool _main_view_init_recorder(main_view *view)
 	endfunc
 	return ret;
 }
-
+*/
 static void _main_view_register_cbs(main_view *view)
 {
     /*evas_object_smart_callback_add(view->layout, EVENT_BACK, _main_view_back_cb, view);*/
@@ -1315,12 +1314,12 @@ static void _main_view_register_cbs(main_view *view)
             _main_view_switch_camera_button_cb, view);
 #endif
 }
-
+/*
 static void _main_view_back_cb(void *data, Evas_Object *obj, void *event_info)
 {
     RETM_IF(!data, "data is NULL");
     main_view *view = data;
-}
+}*/
 
 static void _main_view_pause_cb(void *data, Evas_Object *obj, void *event_info)
 {
@@ -1457,6 +1456,11 @@ void _main_view_app_resume()
 	RETM_IF(!view, "view is NULL");
 	camera_state_e cur_state = CAMERA_STATE_NONE;
 	int res = camera_get_state(view->camera, &cur_state);
+	if(res<0)
+	{
+		ERR("camera_get_state error code %d", res);
+		return;
+	}
 	if (cur_state != CAMERA_STATE_PREVIEW) {
 		_main_view_start_camera_preview(view->camera);
 	}
@@ -1550,8 +1554,8 @@ static void _main_view_capture_cb(camera_image_data_s *image,
 {
     startfunc
     RETM_IF(!user_data, "user_data is NULL");
-    int ret = 0;
-    ExifData *exdata = NULL ;
+    /*int ret = 0;
+    ExifData *exdata = NULL ;*/
     main_view *view = user_data;
 
     if (!view->camera_enabled) {
@@ -1961,7 +1965,7 @@ static void _main_view_switch_camera_button_cb(void *data, Evas_Object *obj,
 	RETM_IF(!data, "data is NULL");
 
 	Eina_Bool ret = EINA_TRUE;
-	int error_code = 0;
+	/*int error_code = 0;*/
 	main_view *view = (main_view *)data;
 
 	ret = _main_view_stop_camera_preview(view->camera);
@@ -2010,7 +2014,7 @@ static void _main_view_switch_camera_button_cb(void *data, Evas_Object *obj,
 		}
 	}
 }
-
+/*
 static void _main_view_video_button_cb(void *data, Evas_Object *obj,
         const char *emission, const char *source)
 {
@@ -2062,7 +2066,7 @@ static void _main_view_video_button_cb(void *data, Evas_Object *obj,
 	view->rec_filesize = 0;
 	_main_view_recorder_view_add(view);
 }
-
+*/
 static void _main_view_show_warning_popup(Evas_Object *navi, const char *caption, const char *text, const char *button_text, void *data)
 {
     RETM_IF(!data, "data is null");
