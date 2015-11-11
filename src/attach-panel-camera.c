@@ -30,7 +30,7 @@
 struct ug_data *g_ugd;
 
 #ifdef ENABLE_UG_CREATE_CB
-extern int ug_create_cb(void (*create_cb)(char*,char*,char*,void*), void *user_data);
+extern int ug_create_cb(void (*create_cb)(char*, char*, char*, void*), void *user_data);
 #endif
 
 bool __attachPanelCamera_get_extra_data_cb(app_control_h service, const char *key, void *user_data);
@@ -113,7 +113,7 @@ static Evas_Object *__attachPanelCamera_create_frameview(Evas_Object *parent, st
 }
 */
 static void *__attachPanelCamera_on_create(ui_gadget_h ug, enum ug_mode mode, app_control_h service,
-		       void *priv)
+        void *priv)
 {
 	Evas_Object *parent = NULL;
 	Evas_Object *content = NULL;
@@ -155,7 +155,7 @@ static void *__attachPanelCamera_on_create(ui_gadget_h ug, enum ug_mode mode, ap
 	char *val = NULL;
 	app_control_get_extra_data(service, "http://tizen.org/appcontrol/data/total_size", (char **)&val);
 	if (val) {
-		ugd->size_limit = atoi(val)/1024;
+		ugd->size_limit = atoi(val) / 1024;
 	} else {
 		ugd->size_limit = 0;
 	}
@@ -174,7 +174,7 @@ static void *__attachPanelCamera_on_create(ui_gadget_h ug, enum ug_mode mode, ap
 	mode = ug_get_mode(ug);
 	ugd->base = __attachPanelCamera_create_fullview(parent, ugd);
 	if (ugd->base) {
-	 	content = __attachPanelCamera_create_content(ugd->base, ugd);
+		content = __attachPanelCamera_create_content(ugd->base, ugd);
 		elm_object_part_content_set(ugd->base, "elm.swallow.content", content);
 	}
 
@@ -190,7 +190,7 @@ static void __attachPanelCamera_on_start(ui_gadget_h ug, app_control_h service, 
 	int status;
 	int a = 1;
 
-	for (i=0; i<10; i++) {
+	for (i = 0; i < 10; i++) {
 		thr_id = pthread_create(&p_thread[i], NULL, __attachPanelCamera_start_t_func, (void*)&a);
 		if (thr_id < 0) {
 			perror("thread create error: ");
@@ -228,7 +228,7 @@ static void __attachPanelCamera_on_destroy(ui_gadget_h ug, app_control_h service
 }
 
 static void __attachPanelCamera_on_message(ui_gadget_h ug, app_control_h msg, app_control_h service,
-		      void *priv)
+		void *priv)
 {
 
 	if (!ug || !priv) {
@@ -245,7 +245,7 @@ static void __attachPanelCamera_on_message(ui_gadget_h ug, app_control_h msg, ap
 		LOGD("called by attach panel ");
 		app_control_get_extra_data(msg, APP_CONTROL_DATA_SELECTION_MODE, &display_mode);
 		if (display_mode) {
-			if(!strcmp(display_mode, "single")) {
+			if (!strcmp(display_mode, "single")) {
 				//change to compact view
 				LOGD("compact view ");
 				_main_view_set_cam_view_layout(CAM_COMPACT_VIEW);
@@ -270,7 +270,7 @@ static void __attachPanelCamera_on_message(ui_gadget_h ug, app_control_h msg, ap
 }
 
 static void __attachPanelCamera_on_event(ui_gadget_h ug, enum ug_event event, app_control_h service,
-		    void *priv)
+		void *priv)
 {
 	struct ug_data *ugd = priv;
 
