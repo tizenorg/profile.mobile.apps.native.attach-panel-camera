@@ -79,7 +79,7 @@ unsigned int exif_size = 0;
 static const char *_error = "Error";
 static const char *_camera_init_failed = "Camera initialization failed.";
 static const char *_ok = "OK";
-static const char _file_prot_str[]= "file://";
+static const char _file_prot_str[] = "file://";
 
 recorder_h grecord = NULL;
 
@@ -104,10 +104,10 @@ static void _main_view_resume_cb(void *data, Evas_Object *obj, void *event_info)
 static size_t _main_view_get_file_path(char *file_path, size_t size, CamFileType fileType);
 
 static void _main_view_capture_cb(camera_image_data_s *image,
-        camera_image_data_s *postview, camera_image_data_s *thumbnail, void *user_data);
+                                  camera_image_data_s *postview, camera_image_data_s *thumbnail, void *user_data);
 static void _main_view_capture_completed_cb(void *data);
-static Eina_Bool _main_view_start_camera_preview (camera_h camera);
-static Eina_Bool _main_view_stop_camera_preview (camera_h camera);
+static Eina_Bool _main_view_start_camera_preview(camera_h camera);
+static Eina_Bool _main_view_stop_camera_preview(camera_h camera);
 
 static void _main_view_shutter_button_cb(void *data, Evas_Object *obj,
         const char *emission, const char *source);
@@ -143,7 +143,7 @@ static void __cam_interrupted_cb(camera_policy_e policy, camera_state_e previous
 	main_view *view = (main_view *)data;
 	RETM_IF(!view, "mainview is null");
 
-	DBG( "policy is [%d]", policy);
+	DBG("policy is [%d]", policy);
 	switch (policy) {
 	case CAMERA_POLICY_SOUND:
 		break;
@@ -151,12 +151,12 @@ static void __cam_interrupted_cb(camera_policy_e policy, camera_state_e previous
 	case CAMERA_POLICY_SOUND_BY_ALARM:
 		//edje_object_part_text_set(_EDJ(view->cameraview_layout), "content_text", string_msg);
 		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout,
-			"/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj",
-			"battery_low_layout");
+		                           "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj",
+		                           "battery_low_layout");
 		elm_object_part_content_set(view->cameraview_layout, "battery_low",
-			view->low_battery_layout);
+		                            view->low_battery_layout);
 		elm_object_domain_translatable_part_text_set(view->low_battery_layout, "low_text",
-			CAM_PACKAGE,"IDS_CAM_POP_UNABLE_TO_START_CAMERA_DURING_CALL");
+		        CAM_PACKAGE, "IDS_CAM_POP_UNABLE_TO_START_CAMERA_DURING_CALL");
 		break;
 	default:
 		break;
@@ -169,7 +169,7 @@ static Eina_Bool _main_view_util_lcd_lock()
 	ret = device_power_request_lock(POWER_LOCK_DISPLAY, 0);
 	RETVM_IF(ret != 0, FALSE, "device_power_request_lock fail [%d]", ret);
 
-	DBG( "display lock");
+	DBG("display lock");
 
 	return TRUE;
 }
@@ -181,7 +181,7 @@ static Eina_Bool _main_view_util_lcd_unlock()
 	ret = device_power_release_lock(POWER_LOCK_DISPLAY);
 	RETVM_IF(ret != 0, FALSE, "device_power_release_lock fail [%d]", ret);
 
-	DBG( "display unlock");
+	DBG("display unlock");
 
 	return TRUE;
 }
@@ -191,16 +191,17 @@ void toast_popup_destroy(void *data)
 	RETM_IF(!data, "data is null");
 	main_view *view = data;
 
-	if (view->popup)
+	if (view->popup) {
 		evas_object_del(view->popup);
+	}
 }
 
-void toast_popup_create(void* data,const char *msg,void (*func)(void *data, Evas_Object *obj, void *event_info))
+void toast_popup_create(void* data, const char *msg, void (*func)(void *data, Evas_Object *obj, void *event_info))
 {
-	 RETM_IF(!data, "data is null");
-	 main_view *view = data;
+	RETM_IF(!data, "data is null");
+	main_view *view = data;
 
-	 toast_popup_destroy(view);
+	toast_popup_destroy(view);
 
 	if (func == NULL) {
 		notification_status_message_post(msg);
@@ -221,8 +222,9 @@ void toast_popup_create(void* data,const char *msg,void (*func)(void *data, Evas
 
 	view->popup = popup;
 
-	if(view->popup)
+	if (view->popup) {
 		evas_object_show(popup);
+	}
 }
 
 static Eina_Bool _main_view_send_result_after_transform(void *data)
@@ -311,11 +313,11 @@ void _main_view_transform_completed(media_packet_h *dst, int error_code, void *u
 		DBG("media_packet_get_format failed");
 	}
 	if (media_format_get_video_info(dst_fmt, &dst_mimetype, &dst_width,
-		&dst_height, &dst_avg_bps, &dst_max_bps) != MEDIA_FORMAT_ERROR_NONE) {
+	                                &dst_height, &dst_avg_bps, &dst_max_bps) != MEDIA_FORMAT_ERROR_NONE) {
 		DBG("media_format_get_video_info failed");
 	}
 
-	DBG("Result packet dst_width =%d , dst_height =%d ,", dst_width, dst_height );
+	DBG("Result packet dst_width =%d , dst_height =%d ,", dst_width, dst_height);
 	ret = media_packet_get_buffer_size(*dst, &size);
 	if (ret != MEDIA_PACKET_ERROR_NONE) {
 		DBG("media_packet_get_buffer_size failed ret =%d", ret);
@@ -351,7 +353,7 @@ void _main_view_transform_completed(media_packet_h *dst, int error_code, void *u
 
 			_main_file_register(view->filename);
 			REMOVE_TIMER(view->crop_timer);
-			view->crop_timer= ecore_timer_add(0.01, _main_view_send_result_after_transform, (void *)view);
+			view->crop_timer = ecore_timer_add(0.01, _main_view_send_result_after_transform, (void *)view);
 		} else {
 			DBG("image_util_encode_jpeg failed ret = %d", ret);
 		}
@@ -402,7 +404,7 @@ static void __cam_app_battery_level_changed_cb(device_callback_e type, void *val
 		_main_view_stop_camera_preview(view->camera);
 		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "battery_low_layout");
 		elm_object_part_content_set(view->cameraview_layout, "battery_low", view->low_battery_layout);
-		elm_object_domain_translatable_part_text_set(view->low_battery_layout, "low_text", CAM_PACKAGE,"IDS_CAM_TPOP_BATTERY_POWER_LOW");
+		elm_object_domain_translatable_part_text_set(view->low_battery_layout, "low_text", CAM_PACKAGE, "IDS_CAM_TPOP_BATTERY_POWER_LOW");
 	} else if (battery_level == DEVICE_BATTERY_LEVEL_LOW) {
 		view->battery_status = LOW_BATTERY_WARNING_STATUS;
 		elm_object_part_content_unset(view->cameraview_layout, "battery_low");
@@ -414,14 +416,14 @@ static void __cam_app_battery_level_changed_cb(device_callback_e type, void *val
 			}
 		}
 		if (view->low_battery_layout != NULL) {
-	        	evas_object_del(view->low_battery_layout);
-	    	}
+			evas_object_del(view->low_battery_layout);
+		}
 	} else {
 		view->battery_status = NORMAL_BATTERY_STATUS;
 		elm_object_part_content_unset(view->cameraview_layout, "battery_low");
 		if (view->low_battery_layout != NULL) {
 			evas_object_del(view->low_battery_layout);
-	    	}
+		}
 		if (CAMERA_ERROR_NONE == res) {
 			if (cur_state != CAMERA_STATE_PREVIEW) {
 				if (!_main_view_start_camera_preview(view->camera)) {
@@ -444,7 +446,7 @@ void _main_view_media_create(char * filename, CamTransformType transformtype)
 	unsigned int size_decode = 0;
 	uint64_t size = 0;
 	void* src_ptr;
-	DBG("file name is %s",filename);
+	DBG("file name is %s", filename);
 	if (pkt) {
 		DBG("Destroy the media packet");
 		media_packet_destroy(pkt);
@@ -452,69 +454,68 @@ void _main_view_media_create(char * filename, CamTransformType transformtype)
 
 	if (handle) {
 		ret = image_util_transform_destroy(handle);
-		if (ret != IMAGE_UTIL_ERROR_NONE ) {
+		if (ret != IMAGE_UTIL_ERROR_NONE) {
 			DBG("image_util_transform_destroy failed %d ", ret);
 		}
 	}
 
 	ret = image_util_decode_jpeg(filename, colorspace, &img_source, &width, &height, &size_decode);
-	if (ret != IMAGE_UTIL_ERROR_NONE ) {
+	if (ret != IMAGE_UTIL_ERROR_NONE) {
 		DBG("image_util_decode_jpeg failed %d ", ret);
 	}
 	DBG("Decoded jpeg buffer width =%d ,height = %d ,size_decode = %d", width, height, size_decode);
-	if (media_format_create(&fmt) == MEDIA_FORMAT_ERROR_NONE)
-	{
+	if (media_format_create(&fmt) == MEDIA_FORMAT_ERROR_NONE) {
 		ret = media_format_set_video_mime(fmt,  MEDIA_FORMAT_RGB888);
-		if (ret != MEDIA_FORMAT_ERROR_NONE ) {
+		if (ret != MEDIA_FORMAT_ERROR_NONE) {
 			DBG("media_format_set_video_mime failed %d ", ret);
 		}
 		ret = media_format_set_video_width(fmt, width);
-		if (ret != MEDIA_FORMAT_ERROR_NONE ) {
+		if (ret != MEDIA_FORMAT_ERROR_NONE) {
 			DBG("media_format_set_video_width failed %d ", ret);
 		}
 		ret = media_format_set_video_height(fmt, height);
-		if (ret != MEDIA_FORMAT_ERROR_NONE ) {
+		if (ret != MEDIA_FORMAT_ERROR_NONE) {
 			DBG("media_format_set_video_height failed %d ", ret);
 		}
 		ret = media_format_set_video_avg_bps(fmt, 2000000);
-		if (ret != MEDIA_FORMAT_ERROR_NONE ) {
+		if (ret != MEDIA_FORMAT_ERROR_NONE) {
 			DBG("media_format_set_video_height failed %d ", ret);
 		}
 		ret = media_format_set_video_max_bps(fmt, 15000000);
-		if (ret != MEDIA_FORMAT_ERROR_NONE ) {
+		if (ret != MEDIA_FORMAT_ERROR_NONE) {
 			DBG("media_format_set_video_height failed %d ", ret);
 		}
 		ret = media_packet_create_alloc(fmt, (media_packet_finalize_cb) media_packet_finalize_cb_img_util, img_source, &pkt);
-		if (ret != MEDIA_PACKET_ERROR_NONE ) {
+		if (ret != MEDIA_PACKET_ERROR_NONE) {
 			DBG("media_packet_create_alloc failed %d ", ret);
 		}
 		media_format_unref(fmt);
 		ret = media_packet_set_buffer_size(pkt, size_decode);
-		if (ret != MEDIA_PACKET_ERROR_NONE ) {
+		if (ret != MEDIA_PACKET_ERROR_NONE) {
 			DBG("media_packet_get_buffer_size failed %d ", ret);
 		}
 		ret = media_packet_get_buffer_size(pkt, &size);
-		if (ret != MEDIA_PACKET_ERROR_NONE ) {
+		if (ret != MEDIA_PACKET_ERROR_NONE) {
 			DBG("media_packet_get_buffer_size failed %d ", ret);
 		}
 		ret = media_packet_get_buffer_data_ptr(pkt, &src_ptr);
-		if (ret != MEDIA_PACKET_ERROR_NONE ) {
+		if (ret != MEDIA_PACKET_ERROR_NONE) {
 			DBG("media_packet_get_buffer_data_ptr failed %d ", ret);
 		}
 		memcpy(src_ptr, img_source, size);
 		DBG("Media packet creation success,image_util_transform_create start");
 
 		ret = image_util_transform_create(&handle);
-		if (ret != IMAGE_UTIL_ERROR_NONE ) {
+		if (ret != IMAGE_UTIL_ERROR_NONE) {
 			DBG("image_util_transform_create failed %d ", ret);
 		}
 		ret = image_util_transform_set_hardware_acceleration(handle, false);
-		if (ret != IMAGE_UTIL_ERROR_NONE ) {
+		if (ret != IMAGE_UTIL_ERROR_NONE) {
 			DBG("image_util_transform_set_hardware_acceleration failed");
 		}
 		if (transformtype == CAM_TRANSFORM_CROP) {
 			DBG("image_util_transform_set_crop_area");
-			if ( CAM_WIDTH == 1600) {
+			if (CAM_WIDTH == 1600) {
 				DBG("RESOLUTION 1600X1200");
 				//ret = image_util_transform_set_crop_area(handle, 0, 490, 1200, 1110);
 				ret = image_util_transform_set_crop_area(handle, 500, 0, 1100, 1200);//490, 0, 1110, 1200);  // 1100,500
@@ -522,7 +523,7 @@ void _main_view_media_create(char * filename, CamTransformType transformtype)
 				DBG("RESOLUTION 640X480");
 				ret = image_util_transform_set_crop_area(handle, 205, 0, 435, 480);
 			}
-			if (ret != IMAGE_UTIL_ERROR_NONE ) {
+			if (ret != IMAGE_UTIL_ERROR_NONE) {
 				DBG("image_util_transform_set_crop_area failed %d ", ret);
 			}
 		} else {
@@ -531,19 +532,17 @@ void _main_view_media_create(char * filename, CamTransformType transformtype)
 		}
 		DBG("image_util_transform_run START");
 		ret = image_util_transform_run(handle, pkt, (image_util_transform_completed_cb)_main_view_transform_completed, handle);//(void*)img_source);
-		if (ret != IMAGE_UTIL_ERROR_NONE ) {
+		if (ret != IMAGE_UTIL_ERROR_NONE) {
 			DBG("image_util_transform_run failed");
 		}
-	}
-	else
-	{
-	   DBG("media_format_create failed");
+	} else {
+		DBG("media_format_create failed");
 	}
 	endfunc
 }
 
 Evas_Object *_main_view_load_edj(Evas_Object *parent, const char *file,
-			      const char *group)
+                                 const char *group)
 {
 	Evas_Object *eo = NULL;
 	int r = 0;
@@ -566,160 +565,164 @@ Evas_Object *_main_view_load_edj(Evas_Object *parent, const char *file,
 
 void main_view_camera_view_add(main_view *view)
 {
-    startfunc
-    RETM_IF(!view, "main_view is NULL");
+	startfunc
+	RETM_IF(!view, "main_view is NULL");
 
-    elm_object_part_content_unset(view->layout, "main_view");
-    if (view->recorderview_layout) {
-        evas_object_del(view->recorderview_layout);
-    }
-    double scale= elm_config_scale_get();
-    if (scale == 2.6)
-    	view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout");
-    else
-    	view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout_WVGA");
+	elm_object_part_content_unset(view->layout, "main_view");
+	if (view->recorderview_layout) {
+		evas_object_del(view->recorderview_layout);
+	}
+	double scale = elm_config_scale_get();
+	if (scale == 2.6) {
+		view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout");
+	} else {
+		view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout_WVGA");
+	}
 
-    elm_object_part_content_set(view->layout, "main_view", view->cameraview_layout);
-    _main_view_register_cbs(view);
+	elm_object_part_content_set(view->layout, "main_view", view->cameraview_layout);
+	_main_view_register_cbs(view);
 }
 
 Evas_Object *main_view_add(Evas_Object *navi, ui_gadget_h ug_handle, unsigned long long size_limit)
 {
-    startfunc
-    main_view *view = calloc(1, sizeof(main_view));
-    RETVM_IF(!view, NULL, "failed to allocate main_view");
-    char *id = NULL;
-    view->ug_handle = ug_handle;
-    view->self_portrait = FALSE;
-    app_get_id(&id);
-    bindtextdomain(CAM_PACKAGE, CAM_LOCALESDIR);
-    DBG("app id = %s",id);
-    if (id != NULL) {
-        if ((!strcmp(id, "org.tizen.message"))||(!strcmp(id, "msg-composer-efl"))) {
-            view->is_size_limit = TRUE;
-        } else {
-            view->is_size_limit = FALSE;
-        }
-        free(id);
-        id = NULL;
-    }
-    view->layout = ui_utils_layout_add(navi, NULL, view);
-    elm_layout_file_set(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "main_layout");
-    evas_object_size_hint_align_set(view->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-    view->preview_canvas = evas_object_image_filled_add(evas_object_evas_get(view->layout));
-    if (!view->preview_canvas) {
-        ERR("failed to create preview_canvas");
-        evas_object_del(view->layout);
-        return NULL;
-    }
-
-    elm_object_part_content_set(view->layout, "elm.swallow.content", view->preview_canvas);
-    double scale= elm_config_scale_get();
-    if (scale == 2.6)
-    	view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout");
-    else
-    	view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout_WVGA");
-    elm_object_part_content_set(view->layout, "main_view", view->cameraview_layout);
-
-    _main_view_set_data(view);
-    view->camera_enabled = _main_view_init_camera(view, CAMERA_DEVICE_CAMERA0);
-    if (view->camera_enabled) {
-	if (!_main_view_start_camera_preview(view->camera)) {
-		ERR("Failed start preview");
+	startfunc
+	main_view *view = calloc(1, sizeof(main_view));
+	RETVM_IF(!view, NULL, "failed to allocate main_view");
+	char *id = NULL;
+	view->ug_handle = ug_handle;
+	view->self_portrait = FALSE;
+	app_get_id(&id);
+	bindtextdomain(CAM_PACKAGE, CAM_LOCALESDIR);
+	DBG("app id = %s", id);
+	if (id != NULL) {
+		if ((!strcmp(id, "org.tizen.message")) || (!strcmp(id, "msg-composer-efl"))) {
+			view->is_size_limit = TRUE;
+		} else {
+			view->is_size_limit = FALSE;
+		}
+		free(id);
+		id = NULL;
 	}
-    }
-    if (error_type == CAMERA_ERROR_SOUND_POLICY_BY_CALL) {
-	ERR("_main_view_start_preview failed");
-	//edje_object_part_text_set(_EDJ(view->cameraview_layout), "content_text", "IDS_CAM_POP_UNABLE_TO_START_CAMERA_DURING_CALL");
-	view->low_battery_layout = _main_view_load_edj(view->cameraview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "battery_low_layout");
-	elm_object_part_content_set(view->cameraview_layout, "battery_low", view->low_battery_layout);
-	elm_object_domain_translatable_part_text_set(view->low_battery_layout, "low_text", CAM_PACKAGE,"IDS_CAM_POP_UNABLE_TO_START_CAMERA_DURING_CALL");
-	// _main_view_show_warning_popup(navi, _error, "Unable to open camera during call", _ok, view);
-    } else if (!view->camera_enabled && !cam_utils_check_battery_critical_low()) {
-	ERR("_main_view_start_preview failed");
-	_main_view_show_warning_popup(navi, _error, _camera_init_failed, _ok, view);
-    } else {
-	// edje_object_part_text_set(_EDJ(view->cameraview_layout), "content_text", "");
-	elm_object_part_content_unset(view->cameraview_layout, "battery_low");
-	evas_object_del(view->low_battery_layout);
-    }
+	view->layout = ui_utils_layout_add(navi, NULL, view);
+	elm_layout_file_set(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "main_layout");
+	evas_object_size_hint_align_set(view->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-    _main_view_register_cbs(view);
-    camera_error_e e;
-    e = camera_set_interrupted_cb(view->camera, __cam_interrupted_cb,(void *)view );
-    if (e != CAMERA_ERROR_NONE) {
-    	DBG("camera_set_interrupted_cb failed - code[%x]", e);
-    	return FALSE;
-    }
-    _main_view_set_data(view);
-    evas_object_show(view->layout);
-    if (view->target_direction == CAM_TARGET_DIRECTION_PORTRAIT)
-	view->cam_view_type = CAM_COMPACT_VIEW;
-    else
-	view->cam_view_type = CAM_FULL_VIEW;
+	view->preview_canvas = evas_object_image_filled_add(evas_object_evas_get(view->layout));
+	if (!view->preview_canvas) {
+		ERR("failed to create preview_canvas");
+		evas_object_del(view->layout);
+		return NULL;
+	}
 
-    if (size_limit != 0)
-	view->size_limit = size_limit;
-    else if (view->is_size_limit == TRUE)
-	view->size_limit = CAM_REC_MMS_MAX_SIZE;
-    else
-	view->size_limit = CAM_REC_NORMAL_MAX_SIZE;
+	elm_object_part_content_set(view->layout, "elm.swallow.content", view->preview_canvas);
+	double scale = elm_config_scale_get();
+	if (scale == 2.6) {
+		view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout");
+	} else {
+		view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout_WVGA");
+	}
+	elm_object_part_content_set(view->layout, "main_view", view->cameraview_layout);
 
-    DBG("view->size_limit set to = %llu", view->size_limit);
+	_main_view_set_data(view);
+	view->camera_enabled = _main_view_init_camera(view, CAMERA_DEVICE_CAMERA0);
+	if (view->camera_enabled) {
+		if (!_main_view_start_camera_preview(view->camera)) {
+			ERR("Failed start preview");
+		}
+	}
+	if (error_type == CAMERA_ERROR_SOUND_POLICY_BY_CALL) {
+		ERR("_main_view_start_preview failed");
+		//edje_object_part_text_set(_EDJ(view->cameraview_layout), "content_text", "IDS_CAM_POP_UNABLE_TO_START_CAMERA_DURING_CALL");
+		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "battery_low_layout");
+		elm_object_part_content_set(view->cameraview_layout, "battery_low", view->low_battery_layout);
+		elm_object_domain_translatable_part_text_set(view->low_battery_layout, "low_text", CAM_PACKAGE, "IDS_CAM_POP_UNABLE_TO_START_CAMERA_DURING_CALL");
+		// _main_view_show_warning_popup(navi, _error, "Unable to open camera during call", _ok, view);
+	} else if (!view->camera_enabled && !cam_utils_check_battery_critical_low()) {
+		ERR("_main_view_start_preview failed");
+		_main_view_show_warning_popup(navi, _error, _camera_init_failed, _ok, view);
+	} else {
+		// edje_object_part_text_set(_EDJ(view->cameraview_layout), "content_text", "");
+		elm_object_part_content_unset(view->cameraview_layout, "battery_low");
+		evas_object_del(view->low_battery_layout);
+	}
 
-    device_add_callback(DEVICE_CALLBACK_BATTERY_LEVEL, __cam_app_battery_level_changed_cb, view);
-    endfunc
-    return view->layout;
+	_main_view_register_cbs(view);
+	camera_error_e e;
+	e = camera_set_interrupted_cb(view->camera, __cam_interrupted_cb, (void *)view);
+	if (e != CAMERA_ERROR_NONE) {
+		DBG("camera_set_interrupted_cb failed - code[%x]", e);
+		return FALSE;
+	}
+	_main_view_set_data(view);
+	evas_object_show(view->layout);
+	if (view->target_direction == CAM_TARGET_DIRECTION_PORTRAIT) {
+		view->cam_view_type = CAM_COMPACT_VIEW;
+	} else {
+		view->cam_view_type = CAM_FULL_VIEW;
+	}
+
+	if (size_limit != 0) {
+		view->size_limit = size_limit;
+	} else if (view->is_size_limit == TRUE) {
+		view->size_limit = CAM_REC_MMS_MAX_SIZE;
+	} else {
+		view->size_limit = CAM_REC_NORMAL_MAX_SIZE;
+	}
+
+	DBG("view->size_limit set to = %llu", view->size_limit);
+
+	device_add_callback(DEVICE_CALLBACK_BATTERY_LEVEL, __cam_app_battery_level_changed_cb, view);
+	endfunc
+	return view->layout;
 }
 
 void _main_view_destroy()
 {
-    startfunc
-    main_view *view = (main_view *)_main_view_get_data();
-    RETM_IF(!view, "main_view is NULL");
-    int ret = 0;
-    _main_view_stop_camera_preview(view->camera);
+	startfunc
+	main_view *view = (main_view *)_main_view_get_data();
+	RETM_IF(!view, "main_view is NULL");
+	int ret = 0;
+	_main_view_stop_camera_preview(view->camera);
 
-    if (grecord != NULL) {
-    	recorder_destroy(grecord);
-	grecord = NULL;
-    }
-    if (pkt) {
-    	media_packet_destroy(pkt);
-    	DBG("Destroy the packet if already available");
-    } else {
-    	DBG("packet is not available to destroy");
-    }
-    if (handle) {
-    	ret = image_util_transform_destroy(handle);
-    	if (ret != IMAGE_UTIL_ERROR_NONE ) {
-    	    DBG("image_util_transform_destroy failed");
-    	} else {
-    	    DBG("image_util_transform_destroy success");
-    	}
-    }
-    if (view->camera != NULL) {
-	camera_destroy(view->camera);
-	view->camera = NULL;
-    }
+	if (grecord != NULL) {
+		recorder_destroy(grecord);
+		grecord = NULL;
+	}
+	if (pkt) {
+		media_packet_destroy(pkt);
+		DBG("Destroy the packet if already available");
+	} else {
+		DBG("packet is not available to destroy");
+	}
+	if (handle) {
+		ret = image_util_transform_destroy(handle);
+		if (ret != IMAGE_UTIL_ERROR_NONE) {
+			DBG("image_util_transform_destroy failed");
+		} else {
+			DBG("image_util_transform_destroy success");
+		}
+	}
+	if (view->camera != NULL) {
+		camera_destroy(view->camera);
+		view->camera = NULL;
+	}
 
-    evas_object_smart_callback_del(view->layout, EVENT_PAUSE, _main_view_pause_cb);
-    evas_object_smart_callback_del(view->layout, EVENT_RESUME, _main_view_resume_cb);
+	evas_object_smart_callback_del(view->layout, EVENT_PAUSE, _main_view_pause_cb);
+	evas_object_smart_callback_del(view->layout, EVENT_RESUME, _main_view_resume_cb);
 
-    elm_object_part_content_unset(view->layout, "main_view");
-    if (view->cameraview_layout != NULL) {
-        evas_object_del(view->cameraview_layout);
-    }
+	elm_object_part_content_unset(view->layout, "main_view");
+	if (view->cameraview_layout != NULL) {
+		evas_object_del(view->cameraview_layout);
+	}
 
-    if (view->recorderview_layout != NULL) {
-        evas_object_del(view->recorderview_layout);
-    }
+	if (view->recorderview_layout != NULL) {
+		evas_object_del(view->recorderview_layout);
+	}
 
-    //free(view);
+	//free(view);
 	IF_FREE(exifData);
-    _main_view_set_data(NULL);
-    endfunc
+	_main_view_set_data(NULL);
+	endfunc
 }
 
 void _main_view_set_data(void *data)
@@ -746,7 +749,7 @@ static void _main_view_recorder_set_recording_size(main_view *view)
 	if (view->rec_filesize < 1024) {
 		snprintf(str, sizeof(str), "%lldK", view->rec_filesize);
 	} else {
-		rec_filesize_in_mega = (double)view->rec_filesize/(double)1024;
+		rec_filesize_in_mega = (double)view->rec_filesize / (double)1024;
 		snprintf(str, sizeof(str), "%.1fM", rec_filesize_in_mega);
 	}
 	if (view->is_size_limit == TRUE) {
@@ -757,7 +760,7 @@ static void _main_view_recorder_set_recording_size(main_view *view)
 		if (view->size_limit < 1024) {
 			snprintf(str1, sizeof(str1), "%lldK", view->size_limit);
 		} else {
-			size_limit_in_mega = (double)view->size_limit/(double)1024;
+			size_limit_in_mega = (double)view->size_limit / (double)1024;
 			snprintf(str1, sizeof(str1), "%.1fM", size_limit_in_mega);
 		}
 
@@ -765,7 +768,7 @@ static void _main_view_recorder_set_recording_size(main_view *view)
 		edje_object_part_text_set(_EDJ(view->progressbar_layout), "left_text_val", str);
 
 		DBG("view->rec_filesize = %lld", view->rec_filesize);
-		pbar_position = view->rec_filesize/(double)view->size_limit;
+		pbar_position = view->rec_filesize / (double)view->size_limit;
 		elm_progressbar_value_set(view->progressbar, pbar_position);
 	} else {
 		edje_object_part_text_set(_EDJ(view->recorderview_layout), "recording_size", str);
@@ -789,8 +792,7 @@ void _main_view_recorder_update_time(main_view *view)
 		_main_view_recorder_rec_icon_update(view);
 		_main_view_recorder_set_recording_time(view);
 		_main_view_recorder_set_recording_size(view);
-	}
-	else {
+	} else {
 		DBG("recorder state = %d && file size = %lld", state, view->rec_filesize);
 	}
 }
@@ -862,11 +864,12 @@ static void _main_view_recorder_rec_icon_create(main_view *view)
 		elm_object_part_content_unset(view->recorderview_layout, "recording_icon");
 		evas_object_del(view->recording_icon);
 	}
-	double scale= elm_config_scale_get();
-	if (scale == 2.6)
+	double scale = elm_config_scale_get();
+	if (scale == 2.6) {
 		view->recording_icon = _main_view_load_edj(view->recorderview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "recording_icon");
-	else
+	} else {
 		view->recording_icon = _main_view_load_edj(view->recorderview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "recording_icon_WVGA");
+	}
 	elm_object_part_content_set(view->recorderview_layout, "recording_icon", view->recording_icon);
 	_main_view_recorder_rec_icon_update(view);
 }
@@ -875,10 +878,11 @@ static void __recording_view_progressbar_create(main_view *view)
 {
 	RETM_IF(!view, "main_view is NULL");
 	double scale = elm_config_scale_get();
-	if (scale == 2.6)
+	if (scale == 2.6) {
 		view->progressbar_layout = _main_view_load_edj(view->recorderview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "progressbar_layout");
-	else
+	} else {
 		view->progressbar_layout = _main_view_load_edj(view->recorderview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "progressbar_layout_WVGA");
+	}
 	RETM_IF(view->progressbar_layout == NULL, "edj load failed");
 	elm_object_part_content_set(view->recorderview_layout, "progressbar_area", view->progressbar_layout);
 
@@ -898,14 +902,14 @@ static void __recording_view_progressbar_create(main_view *view)
 	if (view->size_limit < 1024) {
 		snprintf(str, sizeof(str), "%lldK", view->size_limit);
 	} else {
-		size_limit_in_mega = (double)view->size_limit/(double)1024;
+		size_limit_in_mega = (double)view->size_limit / (double)1024;
 		snprintf(str, sizeof(str), "%.1fM", size_limit_in_mega);
 	}
 
-	if (view->rec_filesize< 1024) {
+	if (view->rec_filesize < 1024) {
 		snprintf(str2, sizeof(str2), "%lldK", view->rec_filesize);
 	} else {
-		rec_filesize_in_mega = (double)view->rec_filesize/(double)1024;
+		rec_filesize_in_mega = (double)view->rec_filesize / (double)1024;
 		snprintf(str2, sizeof(str2), "%.1fM", rec_filesize_in_mega);
 	}
 
@@ -921,18 +925,19 @@ void _main_view_recorder_view_add(main_view *view)
 	elm_object_part_content_unset(view->layout, "main_view");
 	evas_object_del(view->cameraview_layout);
 	_main_view_set_target_direction(view->target_direction);
-	double scale= elm_config_scale_get();
-	if (scale == 2.6)
+	double scale = elm_config_scale_get();
+	if (scale == 2.6) {
 		view->recorderview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "recorder_layout");
-	else
+	} else {
 		view->recorderview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "recorder_layout_WVGA");
-		elm_object_part_content_set(view->layout, "main_view", view->recorderview_layout);
+	}
+	elm_object_part_content_set(view->layout, "main_view", view->recorderview_layout);
 	elm_object_signal_callback_add(view->recorderview_layout, "rec_stop_button_clicked", "*",
-	_main_view_recorder_stop_button_cb, view);
+	                               _main_view_recorder_stop_button_cb, view);
 	elm_object_signal_callback_add(view->recorderview_layout, "rec_pause_button_clicked", "*",
-            _main_view_recorder_pause_button_cb, view);
+	                               _main_view_recorder_pause_button_cb, view);
 	elm_object_signal_callback_add(view->recorderview_layout, "rec_resume_button_clicked", "*",
-            _main_view_recorder_resume_button_cb, view);
+	                               _main_view_recorder_resume_button_cb, view);
 
 	_main_view_recorder_rec_icon_create(view);
 	_main_view_recorder_set_recording_time(view);
@@ -958,85 +963,85 @@ static Eina_Bool _main_view_create_recorder(camera_h camera)
 	return EINA_TRUE;
 }
 */
-static Eina_Bool _main_view_start_camera_preview (camera_h camera)
+static Eina_Bool _main_view_start_camera_preview(camera_h camera)
 {
-    startfunc
-    main_view *view = (main_view *)_main_view_get_data();
-    RETVM_IF(!view, EINA_FALSE, "main_view is NULL");
-    camera_state_e cur_state = CAMERA_STATE_NONE;
-    int width = 0;
-    int height = 0;
-    if (cam_utils_check_battery_critical_low()) {
+	startfunc
+	main_view *view = (main_view *)_main_view_get_data();
+	RETVM_IF(!view, EINA_FALSE, "main_view is NULL");
+	camera_state_e cur_state = CAMERA_STATE_NONE;
+	int width = 0;
+	int height = 0;
+	if (cam_utils_check_battery_critical_low()) {
 		ERR("Battery critically low");
 		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "battery_low_layout");
 		elm_object_part_content_set(view->cameraview_layout, "battery_low", view->low_battery_layout);
 		elm_object_domain_translatable_part_text_set(view->low_battery_layout, "low_text", CAM_PACKAGE, "IDS_CAM_TPOP_BATTERY_POWER_LOW");
 		return EINA_FALSE;
-    }
-
-    int res = camera_get_state(camera, &cur_state);
-    DBG("current camera state= %d", cur_state);
-    if (CAMERA_ERROR_NONE == res) {
-        if (cur_state != CAMERA_STATE_CAPTURED) {
-            camera_start_focusing(camera, TRUE);
-	    res = camera_attr_enable_tag(camera, TRUE);
-            if (res != CAMERA_ERROR_NONE) {
-                ERR("camera_attr_is_enabled_tag failed - code[%x]", res);
-                return EINA_FALSE;
-            }
-            res = camera_set_capture_resolution(camera, CAM_WIDTH, CAM_HEIGHT);
-            if (res != CAMERA_ERROR_NONE) {
-                ERR("camera_set_capture_resolution failed - code[%x]", res);
-                return EINA_FALSE;
-            }
-
-            res = camera_get_recommended_preview_resolution(camera, &width, &height);
-            if (res != CAMERA_ERROR_NONE) {
-                ERR("camera_get_recommended_preview_resolution failed - code[%x]", res);
-                return EINA_FALSE;
-            }
-
-            ERR("camera_set_preview_resolution width = %d - height[%d]", width, height);
-            res = camera_set_preview_resolution(camera, width, height);
-            if (res != CAMERA_ERROR_NONE) {
-                ERR("camera_set_preview_resolution failed - code[%x]", res);
-                return EINA_FALSE;
-            }
 	}
-        if (cur_state != CAMERA_STATE_PREVIEW) {
-            res = camera_start_preview(camera);
-            if (res!=CAMERA_ERROR_NONE) {
-                error_type=res;
-                ERR("unable to open during call");
-            }  else {
-                error_type = 0;
-            }
-            _main_view_util_lcd_lock();
-            return EINA_TRUE;
-        }
-    } else {
-        ERR("Cannot get camera state. Error: %d", res);
-    }
-    endfunc
-    return EINA_FALSE;
+
+	int res = camera_get_state(camera, &cur_state);
+	DBG("current camera state= %d", cur_state);
+	if (CAMERA_ERROR_NONE == res) {
+		if (cur_state != CAMERA_STATE_CAPTURED) {
+			camera_start_focusing(camera, TRUE);
+			res = camera_attr_enable_tag(camera, TRUE);
+			if (res != CAMERA_ERROR_NONE) {
+				ERR("camera_attr_is_enabled_tag failed - code[%x]", res);
+				return EINA_FALSE;
+			}
+			res = camera_set_capture_resolution(camera, CAM_WIDTH, CAM_HEIGHT);
+			if (res != CAMERA_ERROR_NONE) {
+				ERR("camera_set_capture_resolution failed - code[%x]", res);
+				return EINA_FALSE;
+			}
+
+			res = camera_get_recommended_preview_resolution(camera, &width, &height);
+			if (res != CAMERA_ERROR_NONE) {
+				ERR("camera_get_recommended_preview_resolution failed - code[%x]", res);
+				return EINA_FALSE;
+			}
+
+			ERR("camera_set_preview_resolution width = %d - height[%d]", width, height);
+			res = camera_set_preview_resolution(camera, width, height);
+			if (res != CAMERA_ERROR_NONE) {
+				ERR("camera_set_preview_resolution failed - code[%x]", res);
+				return EINA_FALSE;
+			}
+		}
+		if (cur_state != CAMERA_STATE_PREVIEW) {
+			res = camera_start_preview(camera);
+			if (res != CAMERA_ERROR_NONE) {
+				error_type = res;
+				ERR("unable to open during call");
+			}  else {
+				error_type = 0;
+			}
+			_main_view_util_lcd_lock();
+			return EINA_TRUE;
+		}
+	} else {
+		ERR("Cannot get camera state. Error: %d", res);
+	}
+	endfunc
+	return EINA_FALSE;
 }
 
-static Eina_Bool _main_view_stop_camera_preview (camera_h camera)
+static Eina_Bool _main_view_stop_camera_preview(camera_h camera)
 {
-    startfunc
-    camera_state_e cur_state = CAMERA_STATE_NONE;
-    int res = camera_get_state(camera, &cur_state);
-    if (CAMERA_ERROR_NONE == res) {
-        if (cur_state == CAMERA_STATE_PREVIEW) {
-            camera_stop_preview(camera);
-            _main_view_util_lcd_unlock();
-            return EINA_TRUE;
-        }
-    } else {
-        ERR("Cannot get camera state. Error: %d", res);
-    }
-    endfunc
-    return EINA_FALSE;
+	startfunc
+	camera_state_e cur_state = CAMERA_STATE_NONE;
+	int res = camera_get_state(camera, &cur_state);
+	if (CAMERA_ERROR_NONE == res) {
+		if (cur_state == CAMERA_STATE_PREVIEW) {
+			camera_stop_preview(camera);
+			_main_view_util_lcd_unlock();
+			return EINA_TRUE;
+		}
+	} else {
+		ERR("Cannot get camera state. Error: %d", res);
+	}
+	endfunc
+	return EINA_FALSE;
 }
 
 static Eina_Bool _main_view_init_camera(main_view *view, int camera_type)
@@ -1060,7 +1065,7 @@ static Eina_Bool _main_view_init_camera(main_view *view, int camera_type)
 					result = camera_set_display_flip(view->camera, CAMERA_FLIP_VERTICAL);
 				}
 				if (CAMERA_ERROR_NONE != result) {
-				        ERR("Failed to set display flip");
+					ERR("Failed to set display flip");
 				}
 #ifndef CAMERA_MACHINE_I686
 				result = camera_set_display_rotation(view->camera, CAMERA_ROTATION_270);
@@ -1071,7 +1076,7 @@ static Eina_Bool _main_view_init_camera(main_view *view, int camera_type)
 					ERR("camera_set_display_rotation failed - code[%x]", result);
 				}
 
-			//	return _main_view_start_camera_preview(view->camera);
+				//	return _main_view_start_camera_preview(view->camera);
 			}
 		}
 	}
@@ -1298,16 +1303,16 @@ static Eina_Bool _main_view_init_recorder(main_view *view)
 */
 static void _main_view_register_cbs(main_view *view)
 {
-    /*evas_object_smart_callback_add(view->layout, EVENT_BACK, _main_view_back_cb, view);*/
-    evas_object_smart_callback_add(view->layout, EVENT_PAUSE, _main_view_pause_cb, view);
-    evas_object_smart_callback_add(view->layout, EVENT_RESUME, _main_view_resume_cb, view);
-    elm_object_signal_callback_add(view->cameraview_layout, "shutter_button_clicked", "*",
-            _main_view_shutter_button_cb, view);
-    /*elm_object_signal_callback_add(view->cameraview_layout, "video_button_clicked", "*",
-            _main_view_video_button_cb, view);*/
+	/*evas_object_smart_callback_add(view->layout, EVENT_BACK, _main_view_back_cb, view);*/
+	evas_object_smart_callback_add(view->layout, EVENT_PAUSE, _main_view_pause_cb, view);
+	evas_object_smart_callback_add(view->layout, EVENT_RESUME, _main_view_resume_cb, view);
+	elm_object_signal_callback_add(view->cameraview_layout, "shutter_button_clicked", "*",
+	                               _main_view_shutter_button_cb, view);
+	/*elm_object_signal_callback_add(view->cameraview_layout, "video_button_clicked", "*",
+	        _main_view_video_button_cb, view);*/
 #ifndef CAMERA_MACHINE_I686
-    elm_object_signal_callback_add(view->cameraview_layout, "change_camera_button_clicked", "*",
-            _main_view_switch_camera_button_cb, view);
+	elm_object_signal_callback_add(view->cameraview_layout, "change_camera_button_clicked", "*",
+	                               _main_view_switch_camera_button_cb, view);
 #endif
 }
 /*
@@ -1319,21 +1324,21 @@ static void _main_view_back_cb(void *data, Evas_Object *obj, void *event_info)
 
 static void _main_view_pause_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    RETM_IF(!data, "data is NULL");
-    main_view *view = data;
+	RETM_IF(!data, "data is NULL");
+	main_view *view = data;
 
-    _main_view_stop_camera_preview(view->camera);
+	_main_view_stop_camera_preview(view->camera);
 }
 
 static void _main_view_resume_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    RETM_IF(!data, "data is NULL");
-    main_view *view = data;
+	RETM_IF(!data, "data is NULL");
+	main_view *view = data;
 
-    if (!_main_view_start_camera_preview(view->camera)) {
-	ERR("Failed start preview");
-	return;
-    }
+	if (!_main_view_start_camera_preview(view->camera)) {
+		ERR("Failed start preview");
+		return;
+	}
 }
 
 bool _main_view_check_phone_dir()
@@ -1387,35 +1392,35 @@ ERROR:
 
 static size_t _main_view_get_file_path(char *file_path, size_t size, CamFileType fileType)
 {
-    RETVM_IF(!file_path, 0, "file_path is NULL");
+	RETVM_IF(!file_path, 0, "file_path is NULL");
 
-    struct tm localtime = {0,};
-    time_t rawtime = time(NULL);
-    main_view *view = (main_view *)_main_view_get_data();
-    RETVM_IF(!view, 0, "view is NULL");
+	struct tm localtime = {0,};
+	time_t rawtime = time(NULL);
+	main_view *view = (main_view *)_main_view_get_data();
+	RETVM_IF(!view, 0, "view is NULL");
 
-    if (_main_view_check_phone_dir() == FALSE) {
-        return 0;
-    }
-    if (localtime_r(&rawtime, &localtime) == NULL) {
-        return 0;
-    }
+	if (_main_view_check_phone_dir() == FALSE) {
+		return 0;
+	}
+	if (localtime_r(&rawtime, &localtime) == NULL) {
+		return 0;
+	}
 	if (fileType == CAM_FILE_IMAGE) {
-	    return snprintf(file_path, size, "%s/%s_%04i-%02i-%02i_%02i:%02i:%02i.jpg",
-	        CAMERA_DIRECTORY, FILE_PREFIX,
-	        localtime.tm_year + 1900, localtime.tm_mon + 1, localtime.tm_mday,
-	        localtime.tm_hour, localtime.tm_min, localtime.tm_sec);
+		return snprintf(file_path, size, "%s/%s_%04i-%02i-%02i_%02i:%02i:%02i.jpg",
+		                CAMERA_DIRECTORY, FILE_PREFIX,
+		                localtime.tm_year + 1900, localtime.tm_mon + 1, localtime.tm_mday,
+		                localtime.tm_hour, localtime.tm_min, localtime.tm_sec);
 	} else {
 		if (view->is_size_limit == TRUE) {
-		    return snprintf(file_path, size, "%s/%s_%04i-%02i-%02i_%02i:%02i:%02i.3gp",
-		        CAMERA_DIRECTORY, FILE_VIDEO_PREFIX,
-		        localtime.tm_year + 1900, localtime.tm_mon + 1, localtime.tm_mday,
-		        localtime.tm_hour, localtime.tm_min, localtime.tm_sec);
+			return snprintf(file_path, size, "%s/%s_%04i-%02i-%02i_%02i:%02i:%02i.3gp",
+			                CAMERA_DIRECTORY, FILE_VIDEO_PREFIX,
+			                localtime.tm_year + 1900, localtime.tm_mon + 1, localtime.tm_mday,
+			                localtime.tm_hour, localtime.tm_min, localtime.tm_sec);
 		} else {
-		    return snprintf(file_path, size, "%s/%s_%04i-%02i-%02i_%02i:%02i:%02i.mp4",
-		        CAMERA_DIRECTORY, FILE_VIDEO_PREFIX,
-		        localtime.tm_year + 1900, localtime.tm_mon + 1, localtime.tm_mday,
-		        localtime.tm_hour, localtime.tm_min, localtime.tm_sec);
+			return snprintf(file_path, size, "%s/%s_%04i-%02i-%02i_%02i:%02i:%02i.mp4",
+			                CAMERA_DIRECTORY, FILE_VIDEO_PREFIX,
+			                localtime.tm_year + 1900, localtime.tm_mon + 1, localtime.tm_mday,
+			                localtime.tm_hour, localtime.tm_min, localtime.tm_sec);
 		}
 	}
 }
@@ -1433,7 +1438,7 @@ void _main_view_app_pause()
 		if (ret == RECORDER_ERROR_NONE) {
 			ERR("recorder_get_state error code %d", ret);
 			if ((state == RECORDER_STATE_RECORDING)
-			    || (state == RECORDER_STATE_PAUSED)) {
+			        || (state == RECORDER_STATE_PAUSED)) {
 				_main_view_recorder_stop_button_cb(view, NULL, NULL, NULL);
 			}
 		}
@@ -1452,8 +1457,7 @@ void _main_view_app_resume()
 	RETM_IF(!view, "view is NULL");
 	camera_state_e cur_state = CAMERA_STATE_NONE;
 	int res = camera_get_state(view->camera, &cur_state);
-	if(res<0)
-	{
+	if (res < 0) {
 		ERR("camera_get_state error code %d", res);
 		return;
 	}
@@ -1463,12 +1467,12 @@ void _main_view_app_resume()
 	if (error_type == CAMERA_ERROR_SOUND_POLICY_BY_CALL) {
 		ERR("Interrupted by call");
 		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout,
-			"/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj",
-			"battery_low_layout");
+		                           "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj",
+		                           "battery_low_layout");
 		elm_object_part_content_set(view->cameraview_layout, "battery_low",
-			view->low_battery_layout);
+		                            view->low_battery_layout);
 		elm_object_domain_translatable_part_text_set(view->low_battery_layout,
-			"low_text", CAM_PACKAGE,"IDS_CAM_TPOP_BATTERY_POWER_LOW");
+		        "low_text", CAM_PACKAGE, "IDS_CAM_TPOP_BATTERY_POWER_LOW");
 	}
 }
 
@@ -1503,7 +1507,7 @@ static void _main_view_ug_send_result(main_view *view, char *file_path)
 		}
 		ret = ug_send_result(view->ug_handle, app_control);
 		if (ret < 0) {
-                    LOGD("ug_send_result failed");
+			LOGD("ug_send_result failed");
 		}
 		app_control_destroy(app_control);
 		if (path_array != NULL) {
@@ -1546,67 +1550,67 @@ bool _main_file_register(const char *filename)
 }
 
 static void _main_view_capture_cb(camera_image_data_s *image,
-        camera_image_data_s *postview, camera_image_data_s *thumbnail, void *user_data)
+		camera_image_data_s *postview, camera_image_data_s *thumbnail, void *user_data)
 {
-    startfunc
-    RETM_IF(!user_data, "user_data is NULL");
-    main_view *view = user_data;
+	startfunc
+	RETM_IF(!user_data, "user_data is NULL");
+	main_view *view = user_data;
 
-    if (!view->camera_enabled) {
-        ERR("Camera hasn't been initialized.");
-        return;
-    }
-
-    if (image->format == CAMERA_PIXEL_FORMAT_JPEG) {
-        DBG("got JPEG data - data [%p], length [%d], width [%d], height [%d]",
-                image->data, image->size, image->width, image->height);
-
-        size_t size = _main_view_get_file_path(view->filename, sizeof(view->filename), CAM_FILE_IMAGE);
-        RETM_IF(0 == size, "_main_view_get_filename() failed");
-        DBG("%s", view->filename);
-
-        FILE *file = fopen(view->filename, "w+");
-        RETM_IF(!file, "Failed to open file");
-        /*Exif data backup from the captured image*/
-        ExifData* exif = NULL;
-        ExifLoader *exifLoader = NULL;
-        /*save exif data*/
-        exifLoader = exif_loader_new();
-        exif_loader_write(exifLoader, image->data, image->size);
-        exif = exif_loader_get_data(exifLoader);
-        exif_loader_unref(exifLoader);
-        exif_data_save_data(exif, &exifData, &exif_size);
-        DBG("Exif SIze: %d Exif data is: %s", exif_size, exifData);
-        exif_data_unref(exif);
-
-       size = fwrite(image->data, image->size, 1, file);
-       WARN_IF(size != 1, "failed to write file");
-       fclose(file);
-	file = NULL;
-	if (view->cam_view_type != CAM_COMPACT_VIEW) {
-		_main_file_register(view->filename);
-	} else {
-		_main_view_media_create(view->filename, CAM_TRANSFORM_CROP);
+	if (!view->camera_enabled) {
+		ERR("Camera hasn't been initialized.");
+		return;
 	}
-    }
-    endfunc
+
+	if (image->format == CAMERA_PIXEL_FORMAT_JPEG) {
+		DBG("got JPEG data - data [%p], length [%d], width [%d], height [%d]",
+		    image->data, image->size, image->width, image->height);
+
+		size_t size = _main_view_get_file_path(view->filename, sizeof(view->filename), CAM_FILE_IMAGE);
+		RETM_IF(0 == size, "_main_view_get_filename() failed");
+		DBG("%s", view->filename);
+
+		FILE *file = fopen(view->filename, "w+");
+		RETM_IF(!file, "Failed to open file");
+		/*Exif data backup from the captured image*/
+		ExifData* exif = NULL;
+		ExifLoader *exifLoader = NULL;
+		/*save exif data*/
+		exifLoader = exif_loader_new();
+		exif_loader_write(exifLoader, image->data, image->size);
+		exif = exif_loader_get_data(exifLoader);
+		exif_loader_unref(exifLoader);
+		exif_data_save_data(exif, &exifData, &exif_size);
+		DBG("Exif SIze: %d Exif data is: %s", exif_size, exifData);
+		exif_data_unref(exif);
+
+		size = fwrite(image->data, image->size, 1, file);
+		WARN_IF(size != 1, "failed to write file");
+		fclose(file);
+		file = NULL;
+		if (view->cam_view_type != CAM_COMPACT_VIEW) {
+			_main_file_register(view->filename);
+		} else {
+			_main_view_media_create(view->filename, CAM_TRANSFORM_CROP);
+		}
+	}
+	endfunc
 }
 
 static void _main_view_capture_completed_cb(void *data)
 {
-    startfunc
-    RETM_IF(!data, "data is NULL");
-    main_view *view = data;
+	startfunc
+	RETM_IF(!data, "data is NULL");
+	main_view *view = data;
 
-    if (!view->camera_enabled) {
-        ERR("Camera hasn't been initialized.");
-        return;
-    }
-    if (view->cam_view_type != CAM_COMPACT_VIEW) {
-        _main_view_ug_send_result(view, view->filename);
-        _main_view_start_camera_preview(view->camera);
-    }
-    endfunc
+	if (!view->camera_enabled) {
+		ERR("Camera hasn't been initialized.");
+		return;
+	}
+	if (view->cam_view_type != CAM_COMPACT_VIEW) {
+		_main_view_ug_send_result(view, view->filename);
+		_main_view_start_camera_preview(view->camera);
+	}
+	endfunc
 }
 
 static int _main_view_get_image_orient_value_by_direction(void *data, CamTargetDirection target_direction)
@@ -1621,24 +1625,24 @@ static int _main_view_get_image_orient_value_by_direction(void *data, CamTargetD
 #else
 	switch (target_direction) {
 	case CAM_TARGET_DIRECTION_PORTRAIT:
-			if (view->self_portrait == TRUE) {
-				orient_value = 8;
-			} else {
-				orient_value = 6;
-			}
+		if (view->self_portrait == TRUE) {
+			orient_value = 8;
+		} else {
+			orient_value = 6;
+		}
 		break;
 	case CAM_TARGET_DIRECTION_PORTRAIT_INVERSE:
-			if (view->self_portrait == TRUE) {
-				orient_value = 6;
-			} else {
-				orient_value = 8;
-			}
+		if (view->self_portrait == TRUE) {
+			orient_value = 6;
+		} else {
+			orient_value = 8;
+		}
 		break;
 	case CAM_TARGET_DIRECTION_LANDSCAPE_INVERSE:
-			orient_value = 3;
+		orient_value = 3;
 		break;
 	case CAM_TARGET_DIRECTION_LANDSCAPE:
-			orient_value = 1;
+		orient_value = 1;
 		break;
 	default:
 		break;
@@ -1654,52 +1658,40 @@ void _main_view_emit_signal_layout(CamTargetDirection target_direction)
 	startfunc
 	main_view *view = (main_view *)_main_view_get_data();
 	RETM_IF(!view, "view is NULL");
-	double scale= elm_config_scale_get();
+	double scale = elm_config_scale_get();
 	switch (target_direction) {
 	case CAM_TARGET_DIRECTION_PORTRAIT:
-		if (scale == 2.6)
-		{
+		if (scale == 2.6) {
 			edje_object_signal_emit(_EDJ(view->cameraview_layout), "portrait", "camera_layout");
 			edje_object_signal_emit(_EDJ(view->recorderview_layout), "portrait", "recorder_layout");
-		}
-		else
-		{
+		} else {
 			edje_object_signal_emit(_EDJ(view->cameraview_layout), "portrait", "camera_layout_WVGA");
 			edje_object_signal_emit(_EDJ(view->recorderview_layout), "portrait", "recorder_layout_WVGA");
 		}
 		break;
 	case CAM_TARGET_DIRECTION_PORTRAIT_INVERSE:
-		if (scale == 2.6)
-		{
+		if (scale == 2.6) {
 			edje_object_signal_emit(_EDJ(view->cameraview_layout), "portrait_inverse", "camera_layout");
 			edje_object_signal_emit(_EDJ(view->recorderview_layout), "portrait_inverse", "recorder_layout");
-		}
-		else
-		{
+		} else {
 			edje_object_signal_emit(_EDJ(view->cameraview_layout), "portrait_inverse", "camera_layout_WVGA");
 			edje_object_signal_emit(_EDJ(view->recorderview_layout), "portrait_inverse", "recorder_layout_WVGA");
 		}
 		break;
 	case CAM_TARGET_DIRECTION_LANDSCAPE_INVERSE:
-		if (scale == 2.6)
-		{
+		if (scale == 2.6) {
 			edje_object_signal_emit(_EDJ(view->cameraview_layout), "landscape_inverse", "camera_layout");
 			edje_object_signal_emit(_EDJ(view->recorderview_layout), "landscape_inverse", "recorder_layout");
-		}
-		else
-		{
+		} else {
 			edje_object_signal_emit(_EDJ(view->cameraview_layout), "landscape_inverse", "camera_layout_WVGA");
 			edje_object_signal_emit(_EDJ(view->recorderview_layout), "landscape_inverse", "recorder_layout_WVGA");
 		}
 		break;
 	case CAM_TARGET_DIRECTION_LANDSCAPE:
-		if (scale == 2.6)
-		{
+		if (scale == 2.6) {
 			edje_object_signal_emit(_EDJ(view->cameraview_layout), "landscape", "camera_layout");
 			edje_object_signal_emit(_EDJ(view->recorderview_layout), "landscape", "recorder_layout");
-		}
-		else
-		{
+		} else {
 			edje_object_signal_emit(_EDJ(view->cameraview_layout), "landscape", "camera_layout_WVGA");
 			edje_object_signal_emit(_EDJ(view->recorderview_layout), "landscape", "recorder_layout_WVGA");
 		}
@@ -1783,12 +1775,10 @@ void _main_view_set_target_direction(CamTargetDirection target_direction)
 	}
 	_main_view_emit_signal_layout(view->target_direction);
 	if (view->device_type == CAMERA_DEVICE_CAMERA1) {
-		if ((target_direction == CAM_TARGET_DIRECTION_LANDSCAPE))
-		{
+		if ((target_direction == CAM_TARGET_DIRECTION_LANDSCAPE)) {
 			camera_set_display_rotation(view->camera, CAMERA_ROTATION_180);
 		}
-		if ((target_direction == CAM_TARGET_DIRECTION_LANDSCAPE_INVERSE))
-		{
+		if ((target_direction == CAM_TARGET_DIRECTION_LANDSCAPE_INVERSE)) {
 			camera_set_display_rotation(view->camera, CAMERA_ROTATION_NONE);
 		}
 	}
@@ -1800,34 +1790,34 @@ static int _main_view_get_image_orient_value(void *data)
 	RETVM_IF(!data, 0, "data is NULL");
 	main_view *view = data;
 
-	DBG("current device orientation %d",view->target_direction);
+	DBG("current device orientation %d", view->target_direction);
 	return _main_view_get_image_orient_value_by_direction(view, view->target_direction);
 }
 
 static void _main_view_shutter_button_cb(void *data, Evas_Object *obj,
         const char *emission, const char *source)
 {
-    startfunc
-    RETM_IF(!data, "data is NULL");
-    main_view *view = data;
-    int orient = 0;
-    int res = 0;
+	startfunc
+	RETM_IF(!data, "data is NULL");
+	main_view *view = data;
+	int orient = 0;
+	int res = 0;
 
-    if (view->cam_view_type == CAM_COMPACT_VIEW) {
-        view->transformtype = CAM_TRANSFORM_CROP;
-    }
-    orient =  _main_view_get_image_orient_value(view);
-    res = camera_attr_set_tag_orientation(view->camera, (camera_attr_tag_orientation_e)orient);
-    if (res != CAMERA_ERROR_NONE) {
-        ERR("camera_attr_set_tag_orientation failed - code[%x]", res);
-    }
+	if (view->cam_view_type == CAM_COMPACT_VIEW) {
+		view->transformtype = CAM_TRANSFORM_CROP;
+	}
+	orient =  _main_view_get_image_orient_value(view);
+	res = camera_attr_set_tag_orientation(view->camera, (camera_attr_tag_orientation_e)orient);
+	if (res != CAMERA_ERROR_NONE) {
+		ERR("camera_attr_set_tag_orientation failed - code[%x]", res);
+	}
 
-    if (view->camera_enabled) {
-        camera_start_capture(view->camera, _main_view_capture_cb, _main_view_capture_completed_cb, view);
-    } else {
-        ERR("Camera hasn't been initialized.");
-    }
-    endfunc
+	if (view->camera_enabled) {
+		camera_start_capture(view->camera, _main_view_capture_cb, _main_view_capture_completed_cb, view);
+	} else {
+		ERR("Camera hasn't been initialized.");
+	}
+	endfunc
 }
 
 static void _main_view_recorder_stop_button_cb(void *data, Evas_Object *obj,
@@ -1871,7 +1861,7 @@ static void _main_view_recorder_stop_button_cb(void *data, Evas_Object *obj,
 	main_view_camera_view_add(view);
 	_main_view_set_target_direction(view->target_direction);
 	if (view->pause_state == FALSE) {
-		 _main_view_start_camera_preview (view->camera);
+		_main_view_start_camera_preview(view->camera);
 	}
 }
 
@@ -1947,7 +1937,7 @@ static void _main_view_recorder_resume_button_cb(void *data, Evas_Object *obj,
 	}
 
 	if ((state == RECORDER_STATE_READY)
-	    || (state == RECORDER_STATE_PAUSED)) {
+	        || (state == RECORDER_STATE_PAUSED)) {
 		error_code = recorder_start(grecord);
 		ERR("recorder_pause error code %d", error_code);
 	}
@@ -1996,12 +1986,10 @@ static void _main_view_switch_camera_button_cb(void *data, Evas_Object *obj,
 		}
 
 		if (view->device_type == CAMERA_DEVICE_CAMERA1) {
-			if ((view->target_direction==CAM_TARGET_DIRECTION_LANDSCAPE))
-			{
+			if ((view->target_direction == CAM_TARGET_DIRECTION_LANDSCAPE)) {
 				camera_set_display_rotation(view->camera, CAMERA_ROTATION_180);
 			}
-			if ((view->target_direction==CAM_TARGET_DIRECTION_LANDSCAPE_INVERSE))
-			{
+			if ((view->target_direction == CAM_TARGET_DIRECTION_LANDSCAPE_INVERSE)) {
 				camera_set_display_rotation(view->camera, CAMERA_ROTATION_NONE);
 			}
 		}
@@ -2062,37 +2050,37 @@ static void _main_view_video_button_cb(void *data, Evas_Object *obj,
 */
 static void _main_view_show_warning_popup(Evas_Object *navi, const char *caption, const char *text, const char *button_text, void *data)
 {
-    RETM_IF(!data, "data is null");
-    main_view *view = data;
+	RETM_IF(!data, "data is null");
+	main_view *view = data;
 
-    Evas_Object *popup = elm_popup_add(navi);
-    RETM_IF(!popup, "Failed to create popup");
+	Evas_Object *popup = elm_popup_add(navi);
+	RETM_IF(!popup, "Failed to create popup");
 
-    elm_object_part_text_set(popup, "title,text", caption);
-    elm_object_text_set(popup, text);
-    evas_object_show(popup);
+	elm_object_part_text_set(popup, "title,text", caption);
+	elm_object_text_set(popup, text);
+	evas_object_show(popup);
 
-    Evas_Object *button = elm_button_add(popup);
-    RETM_IF(!button, "Failed to add button");
+	Evas_Object *button = elm_button_add(popup);
+	RETM_IF(!button, "Failed to add button");
 
-    elm_object_style_set(button, POPUP_BUTTON_STYLE);
-    elm_object_text_set(button, button_text);
-    elm_object_part_content_set(popup, POPUP_BUTTON_PART, button);
-    evas_object_smart_callback_add(button, "clicked", _main_view_popup_close_cb, view);
+	elm_object_style_set(button, POPUP_BUTTON_STYLE);
+	elm_object_text_set(button, button_text);
+	elm_object_part_content_set(popup, POPUP_BUTTON_PART, button);
+	evas_object_smart_callback_add(button, "clicked", _main_view_popup_close_cb, view);
 
 
-    view->popup = popup;
+	view->popup = popup;
 }
 
 static void _main_view_popup_close_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    RETM_IF(!data, "data is null");
-    main_view *view = data;
+	RETM_IF(!data, "data is null");
+	main_view *view = data;
 
-    if (view->popup) {
-        evas_object_del(view->popup);
-        view->popup = NULL;
-    }
+	if (view->popup) {
+		evas_object_del(view->popup);
+		view->popup = NULL;
+	}
 }
 
 void _main_view_set_show_content(Eina_Bool showContent)
@@ -2114,8 +2102,8 @@ void _main_view_set_show_content(Eina_Bool showContent)
 	ret = recorder_get_state(grecord, (recorder_state_e *)&state);
 	if (ret == RECORDER_ERROR_NONE) {
 		if ((state == RECORDER_STATE_RECORDING)
-		    || (state == RECORDER_STATE_PAUSED)) {
-		    _main_view_recorder_stop_button_cb(view, NULL, NULL, NULL);
+		        || (state == RECORDER_STATE_PAUSED)) {
+			_main_view_recorder_stop_button_cb(view, NULL, NULL, NULL);
 		}
 	}
 }
@@ -2126,9 +2114,8 @@ void _main_view_set_cam_view_layout(CamViewType cam_view_type)
 	RETM_IF(!view, "view is NULL");
 	view->cam_view_type = cam_view_type;
 	if (view->target_direction == CAM_TARGET_DIRECTION_PORTRAIT) {
-		double scale= elm_config_scale_get();
-		if (scale == 2.6)
-		{
+		double scale = elm_config_scale_get();
+		if (scale == 2.6) {
 			edje_object_signal_emit(_EDJ(view->recorderview_layout), "portrait", "recorder_layout");
 			edje_object_signal_emit(_EDJ(view->cameraview_layout), "portrait", "camera_layout");
 		} else {
