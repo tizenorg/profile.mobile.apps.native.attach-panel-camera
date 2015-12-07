@@ -12,7 +12,7 @@ IF("${CMAKE_BUILD_TYPE}" STREQUAL "")
 ENDIF("${CMAKE_BUILD_TYPE}" STREQUAL "")
 MESSAGE("Build type: ${CMAKE_BUILD_TYPE}")
 
-SET(PREFIX ${CMAKE_INSTALL_PREFIX}/ug)
+SET(PREFIX ${CMAKE_INSTALL_PREFIX})
 SET(LIBDIR "${PREFIX}/lib")
 SET(RESDIR "${PREFIX}/res")
 SET(DATADIR "${PREFIX}/data")
@@ -55,6 +55,7 @@ pkg_check_modules(pkgs REQUIRED
 	capi-media-recorder
 	capi-system-device
 	libexif
+	libtzplatform-config
 )
 
 FOREACH(flag ${pkgs_CFLAGS})
@@ -101,15 +102,15 @@ ADD_CUSTOM_COMMAND(OUTPUT attach-panel-camera.edj
 ADD_CUSTOM_TARGET(attach-panel-camera_edj_build DEPENDS attach-panel-camera.edj)
 ADD_DEPENDENCIES(${PROJECT_NAME} attach-panel-camera_edj_build)
 
-INSTALL(TARGETS ${PROJECT_NAME} DESTINATION /usr/apps/${PROJECT_NAME}/lib/ug/)
+INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${LIBDIR})
 
-INSTALL(FILES ${CMAKE_BINARY_DIR}/attach-panel-camera.edj DESTINATION /usr/ug/res/edje/${PROJECT_NAME}/)
+INSTALL(FILES ${CMAKE_BINARY_DIR}/attach-panel-camera.edj DESTINATION ${RESDIR}/edje/${PROJECT_NAME})
 
-INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res/images/ DESTINATION /usr/ug/res/images/${PROJECT_NAME}/)
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res/images/ DESTINATION ${RESDIR}/images/${PROJECT_NAME})
 
 
 #INSTALL(FILES ${PROJECT_NAME}.xml DESTINATION /usr/share/packages)
-INSTALL(FILES ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.xml DESTINATION /usr/share/packages/)
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.xml DESTINATION ${TZ_SYS_RO_PACKAGES})
 
 # Install appcontrol icon
 #INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/res/icon/attach-panel-camera.png DESTINATION /usr/ug/res/images/attach-panel-camera)
