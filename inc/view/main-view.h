@@ -65,9 +65,8 @@
 #define CAM_REC_MMS_MAX_SIZE	(295)	/* kbyte */
 #define CAM_REC_NORMAL_MAX_SIZE	(4*1024*1024)	/* kbyte */
 
-#define CAM_PACKAGE							"org.tizen.camera-app"
-
-#define CAM_LOCALESDIR							"/usr/apps/org.tizen.camera-app/res/locale/"
+#define CAM_PACKAGE						"org.tizen.camera-app"
+#define CAM_LOCALESDIR					get_path(tzplatform_getenv(TZ_SYS_RO_APP),"/org.tizen.camera-app/res/locale/")
 
 typedef enum _CamTargetDirection {
 	CAM_TARGET_DIRECTION_INVAILD = -1,
@@ -137,6 +136,7 @@ typedef struct
 	int timer_count;
 	ui_gadget_h ug_handle;
 	CamViewType cam_view_type;
+	char *edje_path;
 } main_view;
 
 Evas_Object *main_view_add(Evas_Object *navi, ui_gadget_h ug_handle, unsigned long long size_limit);
