@@ -21,16 +21,21 @@
 
 #include <app.h>
 #include <linux/limits.h>
+#include <tzplatform_config.h>
 
-#define SELF_CAMERA_LAYOUT  "edje/attach-panel-camera/attach-panel-camera.edj"
+#define SELF_CAMERA_LAYOUT  "attach-panel-camera/attach-panel-camera.edj"
 #define SOUND_COUNT         "sounds/sounds_count.mp3"
 
 #define POPUP_BUTTON_STYLE  "popup_button/default"
 #define POPUP_BUTTON_PART   "button1"
-
+inline char * get_path(char *string1, char *string2){
+			char path[1024] = {};
+			snprintf(path, 1024,"%s%s", string1, string2);
+			return path;
+}
 /* storage path */
-#define INTERNAL_DCIM_PATH  "/opt/usr/media/DCIM"
-#define CAMERA_DIRECTORY    INTERNAL_DCIM_PATH"/Camera"
+#define INTERNAL_DCIM_PATH	get_path(tzplatform_getenv(TZ_USER_CONTENT),"/DCIM")
+#define CAMERA_DIRECTORY    get_path(INTERNAL_DCIM_PATH,"/Camera")
 #define IMAGE_MIME_TYPE     "image/*"
 
 
@@ -43,7 +48,7 @@ static inline const char *get_res_path()
     static char res_folder_path[PATH_MAX] = { '\0' };
     if(res_folder_path[0] == '\0')
     {
-        char *resource_path_buf = "/usr/ug/res/";
+        char *resource_path_buf = app_get_resource_path();
         strncpy(res_folder_path, resource_path_buf, PATH_MAX-1);
 
     }
