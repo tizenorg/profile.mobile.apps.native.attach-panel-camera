@@ -135,8 +135,27 @@ static void _main_view_popup_close_cb(void *data, Evas_Object *obj, void *event_
 static void __recording_view_progressbar_create(main_view *view);
 static Eina_Bool _main_view_util_lcd_lock();
 static Eina_Bool _main_view_util_lcd_unlock();
-
 int error_type = 0;
+
+static void set_edje_path(main_view *view)
+{
+	RETM_IF(!view, "mainview is null");
+	if(view->edje_path) {
+		return;
+	}
+	else {
+		char *path=app_get_resource_path();
+		if(path==NULL) {
+			DBG("path is null");
+			return ;
+		}
+		else {
+			snprintf(view->edje_path, 1024, "%s%s/%s", path, "edje", SELF_CAMERA_LAYOUT);
+			DBG("edje_path path = %s",view->edje_path);
+			free(path);
+		}
+	}
+}
 
 static void __cam_interrupted_cb(camera_policy_e policy, camera_state_e previous, camera_state_e current, void *data)
 {
@@ -151,7 +170,7 @@ static void __cam_interrupted_cb(camera_policy_e policy, camera_state_e previous
 	case CAMERA_POLICY_SOUND_BY_ALARM:
 		//edje_object_part_text_set(_EDJ(view->cameraview_layout), "content_text", string_msg);
 		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout,
-		                           "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj",
+									view->edje_path,
 		                           "battery_low_layout");
 		elm_object_part_content_set(view->cameraview_layout, "battery_low",
 		                            view->low_battery_layout);
@@ -402,7 +421,7 @@ static void __cam_app_battery_level_changed_cb(device_callback_e type, void *val
 	if (battery_level <= DEVICE_BATTERY_LEVEL_CRITICAL) {
 		view->battery_status = LOW_BATTERY_CRITICAL_STATUS;
 		_main_view_stop_camera_preview(view->camera);
-		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "battery_low_layout");
+		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout, view->edje_path, "battery_low_layout");
 		elm_object_part_content_set(view->cameraview_layout, "battery_low", view->low_battery_layout);
 		elm_object_domain_translatable_part_text_set(view->low_battery_layout, "low_text", CAM_PACKAGE, "IDS_CAM_TPOP_BATTERY_POWER_LOW");
 	} else if (battery_level == DEVICE_BATTERY_LEVEL_LOW) {
@@ -574,9 +593,9 @@ void main_view_camera_view_add(main_view *view)
 	}
 	double scale = elm_config_scale_get();
 	if (scale == 2.6) {
-		view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout");
+		view->cameraview_layout = _main_view_load_edj(view->layout, view->edje_path, "camera_layout");
 	} else {
-		view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout_WVGA");
+		view->cameraview_layout = _main_view_load_edj(view->layout, view->edje_path, "camera_layout_WVGA");
 	}
 
 	elm_object_part_content_set(view->layout, "main_view", view->cameraview_layout);
@@ -592,6 +611,7 @@ Evas_Object *main_view_add(Evas_Object *navi, ui_gadget_h ug_handle, unsigned lo
 	view->ug_handle = ug_handle;
 	view->self_portrait = FALSE;
 	app_get_id(&id);
+	set_edje_path(view);
 	bindtextdomain(CAM_PACKAGE, CAM_LOCALESDIR);
 	DBG("app id = %s", id);
 	if (id != NULL) {
@@ -604,7 +624,7 @@ Evas_Object *main_view_add(Evas_Object *navi, ui_gadget_h ug_handle, unsigned lo
 		id = NULL;
 	}
 	view->layout = ui_utils_layout_add(navi, NULL, view);
-	elm_layout_file_set(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "main_layout");
+	elm_layout_file_set(view->layout, view->edje_path, "main_layout");
 	evas_object_size_hint_align_set(view->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
 	view->preview_canvas = evas_object_image_filled_add(evas_object_evas_get(view->layout));
@@ -617,9 +637,9 @@ Evas_Object *main_view_add(Evas_Object *navi, ui_gadget_h ug_handle, unsigned lo
 	elm_object_part_content_set(view->layout, "elm.swallow.content", view->preview_canvas);
 	double scale = elm_config_scale_get();
 	if (scale == 2.6) {
-		view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout");
+		view->cameraview_layout = _main_view_load_edj(view->layout, view->edje_path, "camera_layout");
 	} else {
-		view->cameraview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "camera_layout_WVGA");
+		view->cameraview_layout = _main_view_load_edj(view->layout, view->edje_path, "camera_layout_WVGA");
 	}
 	elm_object_part_content_set(view->layout, "main_view", view->cameraview_layout);
 
@@ -633,7 +653,7 @@ Evas_Object *main_view_add(Evas_Object *navi, ui_gadget_h ug_handle, unsigned lo
 	if (error_type == CAMERA_ERROR_SOUND_POLICY_BY_CALL) {
 		ERR("_main_view_start_preview failed");
 		//edje_object_part_text_set(_EDJ(view->cameraview_layout), "content_text", "IDS_CAM_POP_UNABLE_TO_START_CAMERA_DURING_CALL");
-		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "battery_low_layout");
+		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout, view->edje_path, "battery_low_layout");
 		elm_object_part_content_set(view->cameraview_layout, "battery_low", view->low_battery_layout);
 		elm_object_domain_translatable_part_text_set(view->low_battery_layout, "low_text", CAM_PACKAGE, "IDS_CAM_POP_UNABLE_TO_START_CAMERA_DURING_CALL");
 		// _main_view_show_warning_popup(navi, _error, "Unable to open camera during call", _ok, view);
@@ -866,9 +886,9 @@ static void _main_view_recorder_rec_icon_create(main_view *view)
 	}
 	double scale = elm_config_scale_get();
 	if (scale == 2.6) {
-		view->recording_icon = _main_view_load_edj(view->recorderview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "recording_icon");
+		view->recording_icon = _main_view_load_edj(view->recorderview_layout, view->edje_path, "recording_icon");
 	} else {
-		view->recording_icon = _main_view_load_edj(view->recorderview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "recording_icon_WVGA");
+		view->recording_icon = _main_view_load_edj(view->recorderview_layout, view->edje_path, "recording_icon_WVGA");
 	}
 	elm_object_part_content_set(view->recorderview_layout, "recording_icon", view->recording_icon);
 	_main_view_recorder_rec_icon_update(view);
@@ -879,9 +899,9 @@ static void __recording_view_progressbar_create(main_view *view)
 	RETM_IF(!view, "main_view is NULL");
 	double scale = elm_config_scale_get();
 	if (scale == 2.6) {
-		view->progressbar_layout = _main_view_load_edj(view->recorderview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "progressbar_layout");
+		view->progressbar_layout = _main_view_load_edj(view->recorderview_layout, view->edje_path, "progressbar_layout");
 	} else {
-		view->progressbar_layout = _main_view_load_edj(view->recorderview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "progressbar_layout_WVGA");
+		view->progressbar_layout = _main_view_load_edj(view->recorderview_layout, view->edje_path, "progressbar_layout_WVGA");
 	}
 	RETM_IF(view->progressbar_layout == NULL, "edj load failed");
 	elm_object_part_content_set(view->recorderview_layout, "progressbar_area", view->progressbar_layout);
@@ -927,9 +947,9 @@ void _main_view_recorder_view_add(main_view *view)
 	_main_view_set_target_direction(view->target_direction);
 	double scale = elm_config_scale_get();
 	if (scale == 2.6) {
-		view->recorderview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "recorder_layout");
+		view->recorderview_layout = _main_view_load_edj(view->layout, view->edje_path, "recorder_layout");
 	} else {
-		view->recorderview_layout = _main_view_load_edj(view->layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "recorder_layout_WVGA");
+		view->recorderview_layout = _main_view_load_edj(view->layout, view->edje_path, "recorder_layout_WVGA");
 	}
 	elm_object_part_content_set(view->layout, "main_view", view->recorderview_layout);
 	elm_object_signal_callback_add(view->recorderview_layout, "rec_stop_button_clicked", "*",
@@ -973,7 +993,7 @@ static Eina_Bool _main_view_start_camera_preview(camera_h camera)
 	int height = 0;
 	if (cam_utils_check_battery_critical_low()) {
 		ERR("Battery critically low");
-		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout, "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj", "battery_low_layout");
+		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout, view->edje_path, "battery_low_layout");
 		elm_object_part_content_set(view->cameraview_layout, "battery_low", view->low_battery_layout);
 		elm_object_domain_translatable_part_text_set(view->low_battery_layout, "low_text", CAM_PACKAGE, "IDS_CAM_TPOP_BATTERY_POWER_LOW");
 		return EINA_FALSE;
@@ -1467,7 +1487,7 @@ void _main_view_app_resume()
 	if (error_type == CAMERA_ERROR_SOUND_POLICY_BY_CALL) {
 		ERR("Interrupted by call");
 		view->low_battery_layout = _main_view_load_edj(view->cameraview_layout,
-		                           "/usr/ug/res/edje/attach-panel-camera/attach-panel-camera.edj",
+		                           view->edje_path,
 		                           "battery_low_layout");
 		elm_object_part_content_set(view->cameraview_layout, "battery_low",
 		                            view->low_battery_layout);
