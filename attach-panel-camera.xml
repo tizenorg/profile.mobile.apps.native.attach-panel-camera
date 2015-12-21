@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns="http://tizen.org/ns/packages" package="attach-panel-camera" version="0.1.0" install-location="internal-only">
+<manifest xmlns="http://tizen.org/ns/packages" package="attach-panel-camera" api-version="2.4" version="0.1.0" install-location="internal-only">
 	<label>Camera-UG</label>
 	<author email="chitta.rs@samsung.com" href="www.samsung.com">CHITTA RANJAN</author>
 	<description>Camera-UG</description>
