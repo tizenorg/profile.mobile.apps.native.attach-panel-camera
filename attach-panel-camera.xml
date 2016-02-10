@@ -17,5 +17,11 @@
 	<privilege>http://tizen.org/privilege/mediastorage</privilege>
 	<privilege>http://tizen.org/privilege/content.read</privilege>
 	<privilege>http://tizen.org/privilege/content.write</privilege>
+	
+	<privilege>http://tizen.org/privilege/location</privilege>
+		<privilege>http://tizen.org/privilege/telephony</privilege>
+		<privilege>http://tizen.org/privilege/display</privilege>
+		<privilege>http://tizen.org/privilege/externalstorage</privilege>
+		<privilege>http://tizen.org/privilege/appmanager.launch</privilege>
     </privileges>
 </manifest>

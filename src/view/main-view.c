@@ -146,6 +146,7 @@ static void set_edje_path(main_view *view)
 			DBG("path is null");
 			return ;
 		}
+		view->edje_path = (char *)malloc(sizeof(char)*1024);
 		snprintf(view->edje_path, 1024, "%s%s/%s", path, "edje", SELF_CAMERA_LAYOUT);
 		DBG("edje_path path = %s",view->edje_path);
 		free(path);
@@ -607,7 +608,7 @@ Evas_Object *main_view_add(Evas_Object *navi, ui_gadget_h ug_handle, unsigned lo
 	view->self_portrait = FALSE;
 	app_get_id(&id);
 	set_edje_path(view);
-	bindtextdomain(CAM_PACKAGE, CAM_LOCALESDIR);
+	//bindtextdomain(CAM_PACKAGE, CAM_LOCALESDIR);
 	DBG("app id = %s", id);
 	if (id != NULL) {
 		if ((!strcmp(id, "org.tizen.message")) || (!strcmp(id, "msg-composer-efl"))) {
@@ -1068,7 +1069,17 @@ static Eina_Bool _main_view_init_camera(main_view *view, int camera_type)
 	if (CAMERA_ERROR_NONE == result) {
 		if (view->preview_canvas) {
 			result = camera_set_display(view->camera, CAMERA_DISPLAY_TYPE_EVAS, GET_DISPLAY(view->preview_canvas));
-
+			if (result != CAMERA_ERROR_NONE) {
+				ERR("camera_set_display failed - code[%x]", result);
+				if (result == CAMERA_ERROR_INVALID_PARAMETER)
+					ERR("CAMERA_ERROR_INVALID_PARAMETER failed - code[%x]", result);
+				if (result == CAMERA_ERROR_INVALID_STATE)
+					ERR("CAMERA_ERROR_INVALID_STATE failed - code[%x]", result);
+				if (result == CAMERA_ERROR_PERMISSION_DENIED)
+					ERR("CAMERA_ERROR_PERMISSION_DENIED failed - code[%x]", result);
+				if (result == CAMERA_ERROR_NOT_SUPPORTED)
+					ERR("CAMERA_ERROR_NOT_SUPPORTED failed - code[%x]", result);
+			}
 			if (CAMERA_ERROR_NONE == result) {
 				camera_set_display_mode(view->camera, CAMERA_DISPLAY_MODE_CROPPED_FULL);
 				camera_set_display_visible(view->camera, true);
