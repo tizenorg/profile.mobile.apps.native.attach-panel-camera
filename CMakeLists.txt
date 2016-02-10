@@ -102,7 +102,7 @@ ADD_CUSTOM_COMMAND(OUTPUT attach-panel-camera.edj
 ADD_CUSTOM_TARGET(attach-panel-camera_edj_build DEPENDS attach-panel-camera.edj)
 ADD_DEPENDENCIES(${PROJECT_NAME} attach-panel-camera_edj_build)
 
-INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${LIBDIR})
+INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${LIBDIR}/ug/)
 
 INSTALL(FILES ${CMAKE_BINARY_DIR}/attach-panel-camera.edj DESTINATION ${RESDIR}/edje/${PROJECT_NAME})
 
