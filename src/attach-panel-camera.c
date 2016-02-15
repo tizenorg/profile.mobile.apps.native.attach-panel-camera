@@ -153,7 +153,7 @@ static void *__attachPanelCamera_on_create(ui_gadget_h ug, enum ug_mode mode, ap
 
 	/* size limit */
 	char *val = NULL;
-	app_control_get_extra_data(service, "http://tizen.org/appcontrol/data/total_size", (char **)&val);
+	app_control_get_extra_data(service, APP_CONTROL_DATA_TOTAL_SIZE, (char **)&val);
 	if (val) {
 		ugd->size_limit = atoi(val) / 1024;
 	} else {
