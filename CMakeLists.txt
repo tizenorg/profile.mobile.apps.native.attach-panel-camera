@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-PROJECT(attach-panel-camera C)
+PROJECT(ug-attach-panel-camera C)
 
 message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 message("furcate arm or i686")
@@ -13,7 +13,7 @@ ENDIF("${CMAKE_BUILD_TYPE}" STREQUAL "")
 MESSAGE("Build type: ${CMAKE_BUILD_TYPE}")
 
 SET(PREFIX ${CMAKE_INSTALL_PREFIX})
-SET(LIBDIR "${PREFIX}/lib/ug")
+SET(LIBDIR "${PREFIX}/lib")
 SET(RESDIR "${PREFIX}/res")
 SET(DATADIR "${PREFIX}/data")
 SET(LOCALEDIR "${RESDIR}/locale")
@@ -66,7 +66,6 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fvisibility=hidden")
 SET(CMAKE_C_FLAGS_DEBUG "-O0 -g -fpie")
 SET(CMAKE_C_FLAGS_RELEASE "-O2 -fpie")
 SET(CMAKE_LDFLAGS "-Wl,-zdefs" )
-SET(camera_UG_PROJECT_NAME attach-panel-camera)
 
 ADD_DEFINITIONS("-DPREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
@@ -106,12 +105,11 @@ INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${LIBDIR})
 
 INSTALL(FILES ${CMAKE_BINARY_DIR}/attach-panel-camera.edj DESTINATION ${RESDIR}/edje/${PROJECT_NAME})
 
-INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res/images/ DESTINATION ${RESDIR}/images/${PROJECT_NAME})
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res/images/ DESTINATION ${RESDIR}/images/attach-panel-camera)
 
 
-#INSTALL(FILES ${PROJECT_NAME}.xml DESTINATION /usr/share/packages)
-INSTALL(FILES ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.xml DESTINATION ${TZ_SYS_RO_PACKAGES})
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/attach-panel-camera.xml DESTINATION ${TZ_SYS_RO_PACKAGES})
 
 # Install appcontrol icon
-#INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/res/icon/attach-panel-camera.png DESTINATION /usr/ug/res/images/attach-panel-camera)
+#INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/res/icon/attach-panel-camera.png DESTINATION ${RESDIR}/images/attach-panel-camera)
 

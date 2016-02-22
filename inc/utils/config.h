@@ -23,7 +23,7 @@
 #include <linux/limits.h>
 #include <tzplatform_config.h>
 
-#define SELF_CAMERA_LAYOUT  "attach-panel-camera/attach-panel-camera.edj"
+#define SELF_CAMERA_LAYOUT  PREFIX"/res/edje/ug-attach-panel-camera/attach-panel-camera.edj"
 #define SOUND_COUNT         "sounds/sounds_count.mp3"
 
 #define POPUP_BUTTON_STYLE  "popup_button/default"

@@ -29,7 +29,7 @@ BuildRequires: pkgconfig(libexif)
 BuildRequires: pkgconfig(libtzplatform-config)
 
 %description
-Description: camera UG
+Description: attach-panel-camera UG
 
 %prep
 %setup -q
@@ -49,7 +49,7 @@ export FFLAGS="$FFLAGS -DTIZEN_ENGINEER_MODE"
 CXXFLAGS+=" -D_ARCH_ARM_ -mfpu=neon"
 %endif
 
-%cmake . -DCMAKE_INSTALL_PREFIX=%{_appdir} \
+%cmake . -DCMAKE_INSTALL_PREFIX=%{TZ_SYS_RO_UG} \
 	-DARCH=%{ARCH} \
 	-DTZ_SYS_RO_PACKAGES=%{TZ_SYS_RO_PACKAGES}
 
@@ -64,16 +64,16 @@ mkdir -p %{buildroot}%{_app_license_dir}
 cp LICENSE %{buildroot}%{_app_license_dir}/attach-panel-camera
 
 %post
-mkdir -p %{TZ_SYS_RO_APP}/%{name}/bin/%{name}
-ln -sf %{TZ_SYS_BIN}/ug-client %{TZ_SYS_RO_APP}/%{name}/bin/%{name}
+mkdir -p /usr/ug/bin/
+ln -sf /usr/bin/ug-client %{TZ_SYS_RO_UG}/bin/attach-panel-camera
 %postun
 
 %files
 %manifest %{name}.manifest
 %defattr(-,root,root,-)
-%{_appdir}/lib/ug/libattach-panel-camera.so*
-%{_appdir}/res/edje/attach-panel-camera/*
-%{_appdir}/res/images/attach-panel-camera/*
+%{TZ_SYS_RO_UG}/lib/libug-attach-panel-camera.so*
+%{TZ_SYS_RO_UG}/res/edje/ug-attach-panel-camera/*
+%{TZ_SYS_RO_UG}/res/images/attach-panel-camera/*
 %{TZ_SYS_RO_PACKAGES}/attach-panel-camera.xml
 %{TZ_SYS_SHARE}/license/attach-panel-camera
 

@@ -140,7 +140,10 @@ int error_type = 0;
 static void set_edje_path(main_view *view)
 {
 	RETM_IF(!view, "mainview is null");
-	if(view->edje_path == NULL) {
+	if (view->edje_path == NULL) {
+		view->edje_path = (char *)malloc(sizeof(char)*1024);
+		snprintf(view->edje_path, 1024, "%s", SELF_CAMERA_LAYOUT);
+/*
 		char *path = app_get_resource_path();
 		if(path == NULL) {
 			DBG("path is null");
@@ -150,6 +153,7 @@ static void set_edje_path(main_view *view)
 		snprintf(view->edje_path, 1024, "%s%s/%s", path, "edje", SELF_CAMERA_LAYOUT);
 		DBG("edje_path path = %s",view->edje_path);
 		free(path);
+*/
 	}
 }
 
