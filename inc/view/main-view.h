@@ -66,7 +66,6 @@
 #define CAM_REC_NORMAL_MAX_SIZE	(4*1024*1024)	/* kbyte */
 
 #define CAM_PACKAGE						"org.tizen.camera-app"
-#define CAM_LOCALESDIR					get_path(tzplatform_getenv(TZ_SYS_RO_APP),"/org.tizen.camera-app/res/locale/")
 
 typedef enum _CamTargetDirection {
 	CAM_TARGET_DIRECTION_INVAILD = -1,
