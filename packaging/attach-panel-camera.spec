@@ -26,6 +26,7 @@ BuildRequires: pkgconfig(capi-media-camera)
 BuildRequires: pkgconfig(capi-system-device)
 BuildRequires: pkgconfig(capi-media-recorder)
 BuildRequires: pkgconfig(libexif)
+BuildRequires: pkgconfig(storage)
 BuildRequires: pkgconfig(libtzplatform-config)
 
 %description
