@@ -21,20 +21,26 @@
 
 #include <app.h>
 #include <linux/limits.h>
-#include <tzplatform_config.h>
+#include <storage.h>
 
 #define SELF_CAMERA_LAYOUT  PREFIX"/res/edje/ug-attach-panel-camera/attach-panel-camera.edj"
 #define SOUND_COUNT         "sounds/sounds_count.mp3"
 
 #define POPUP_BUTTON_STYLE  "popup_button/default"
 #define POPUP_BUTTON_PART   "button1"
+static inline char *Get_Root_Path(int storage_id)
+{
+	char *path = NULL;
+	storage_get_root_directory(storage_id, &path) ;
+	return path;
+}
 inline char * get_path(char *string1, char *string2){
 			char path[1024] = {};
 			snprintf(path, 1024,"%s%s", string1, string2);
 			return path;
 }
 /* storage path */
-#define INTERNAL_DCIM_PATH	get_path(tzplatform_getenv(TZ_USER_CONTENT),"/DCIM")
+#define INTERNAL_DCIM_PATH	get_path(Get_Root_Path(STORAGE_TYPE_INTERNAL),"/DCIM")
 #define CAMERA_DIRECTORY    get_path(INTERNAL_DCIM_PATH,"/Camera")
 #define IMAGE_MIME_TYPE     "image/*"
 

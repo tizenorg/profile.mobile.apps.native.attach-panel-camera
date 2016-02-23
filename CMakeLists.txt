@@ -55,6 +55,7 @@ pkg_check_modules(pkgs REQUIRED
 	capi-media-recorder
 	capi-system-device
 	libexif
+	storage
 	libtzplatform-config
 )
 
