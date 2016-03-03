@@ -33,6 +33,7 @@
 #include <image_util.h>
 #include <media_format.h>
 #include <media_packet.h>
+#include <config.h>
 
 #define COUNTER_STR_LEN 3
 #define FILE_PREFIX "IMAGE"
