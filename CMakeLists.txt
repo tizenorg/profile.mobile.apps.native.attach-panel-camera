@@ -56,6 +56,7 @@ pkg_check_modules(pkgs REQUIRED
 	capi-system-device
 	libexif
 	storage
+	notification
 	libtzplatform-config
 )
 

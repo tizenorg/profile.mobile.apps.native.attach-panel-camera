@@ -37,7 +37,7 @@ static inline char *Get_Root_Path(int storage_id,int type)
 inline char * get_path(char *string1, char *string2){
 			char path[1024] = {};
 			snprintf(path, 1024,"%s%s", string1, string2);
-			return path;
+			return strdup(path);
 }
 /* storage path */
 #define INTERNAL_DCIM_PATH	Get_Root_Path(STORAGE_TYPE_INTERNAL, STORAGE_DIRECTORY_CAMERA)

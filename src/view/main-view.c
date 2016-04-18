@@ -29,6 +29,7 @@
 #include <dlog.h>
 #include <app_control.h>
 #include <media_content.h>
+#include <notification.h>
 
 #include <image_util.h>
 #include <media_format.h>
