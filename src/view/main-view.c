@@ -1769,8 +1769,7 @@ void _main_view_set_target_direction(CamTargetDirection target_direction)
 	view->target_direction = target_direction;
 	DBG(" target direction = %d , display_direction =%d", target_direction, display_direction);
 
-	if (display_direction != view->target_direction) {
-		switch (view->target_direction) {
+	switch (view->target_direction) {
 		case CAM_TARGET_DIRECTION_PORTRAIT:
 #ifndef CAMERA_MACHINE_I686
 			rotationVal = CAMERA_ROTATION_270;
@@ -1797,10 +1796,9 @@ void _main_view_set_target_direction(CamTargetDirection target_direction)
 			break;
 		default:
 			break;
-		}
-		if (ret != CAMERA_ERROR_NONE) {
-			ERR("camera_set_display_rotation failed - code[%x]", ret);
-		}
+	}
+	if (ret != CAMERA_ERROR_NONE) {
+		ERR("camera_set_display_rotation failed - code[%x]", ret);
 	}
 	_main_view_emit_signal_layout(view->target_direction);
 	if (view->device_type == CAMERA_DEVICE_CAMERA1) {
